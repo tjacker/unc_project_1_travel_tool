@@ -1,0 +1,49 @@
+//  Foundation Overrides
+//  --------------------
+//
+//  Table of Contents:
+//
+//   0. Mixins
+//   1. Base Elements
+
+// 0. Mixins
+// ----------------
+
+
+
+// 1. Base Elements
+// ----------------
+
+
+
+// 1. Search Menu
+// ----------------
+
+.top-bar {
+  @include breakpoint(medium down) {
+    flex-direction: column;
+  }
+  .site-logo {
+    width: 3rem;
+    @include breakpoint(large) {
+      width: 3.5rem;
+    }
+  }
+  .menu {
+    li {
+      margin: auto 0;
+    }
+  }
+  input,
+  button {
+    height: 40px;
+  }
+  input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
