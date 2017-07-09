@@ -81,7 +81,7 @@ $foundation-palette: (
 $light-gray: #e6e6e6;
 $medium-gray: #cacaca;
 $dark-gray: #8a8a8a;
-$black: #0a0a0a;
+$black: #1e1e1e;
 $white: #fdfdfa; // #fefefe
 $body-background: $white;
 $body-font-color: $black;
@@ -93,7 +93,7 @@ $global-position: 1rem;
 $global-weight-normal: 400; // normal
 $global-weight-bold: 600; // bold
 $global-radius: 5px; // 0
-$global-menu-padding: 0.7rem 1rem;
+$global-menu-padding: 0 1rem; // 0.7rem 1rem
 $global-menu-nested-margin: 1rem;
 $global-text-direction: ltr;
 $global-flexbox: true;
@@ -842,11 +842,11 @@ $tooltip-radius: $global-radius;
 // 55. Top Bar
 // -----------
 
-$topbar-padding: 0.5rem 1rem; // 0.5rem
+$topbar-padding: 1rem; // 0.5rem
 $topbar-background: $topbar-blue; // $light-gray
 $topbar-submenu-background: $topbar-background;
 $topbar-title-spacing: 0.5rem 1rem 0.5rem 0;
-$topbar-input-width: 200px;
+$topbar-input-width: 240px; // 200px
 $topbar-unstack-breakpoint: large; // medium
 
 // 56. Xy Grid

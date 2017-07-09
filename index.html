@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/app.css" />
   </head>
   <body>
-    <div class="top-bar" id="search-menu">
+    <header class="top-bar" id="search-menu">
       <div class="top-bar-left">
         <ul class="menu">
           <li><img class="site-logo" src="img/suitcase.svg" alt="Suitcase logo"></li>
@@ -18,15 +18,25 @@
       </div>
       <div class="top-bar-right">
         <ul class="menu">
-          <li><input type="search" placeholder="Location"></li>
-          <li><button type="button" class="button">Search</button></li>
+          <li><input id="search-fld" type="search" placeholder="Location"></li>
+          <li><button id="clear-btn" type="button" class="button">Clear</button></li>
         </ul>
       </div>
-    </div>
+    </header>
+    <main>
+      <div id="map"></div>
+      <div id="location-details">
+        <span data-geo="lat"></span>
+        <span data-geo="lng"></span>
+      </div>
+    </main>
+    
 
     <script src="js/jquery.min.js"></script>
     <script src="js/what-input.min.js"></script>
     <script src="js/foundation.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArp8rpsILlsAxbEpXI3A4kQab_5RErYNY&libraries=places"></script>
+    <script src="js/jquery.geocomplete.min.js"></script>
     <script src="js/app.js"></script>
     <script>
       $(document).foundation();
