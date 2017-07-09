@@ -68,11 +68,11 @@
 $global-font-size: 100%;
 $global-width: rem-calc(1200);
 $global-lineheight: 1.5;
-// Custom Colors
+// Custom Color Variables
 $topbar-blue: #133c55;
 // -------------
 $foundation-palette: (
-  primary: #ee7674, // #1779ba
+  primary: #fb7064, // #1779ba
   secondary: #767676,
   success: #3adb76,
   warning: #ffae00,
@@ -285,7 +285,7 @@ $button-padding: 0.85em 1em;
 $button-margin: 0 0 $global-margin 0;
 $button-fill: solid;
 $button-background: $primary-color;
-$button-background-hover: scale-color($button-background, $lightness: -15%);
+$button-background-hover: scale-color($button-background, $lightness: -10%); // -15%
 $button-color: $white;
 $button-color-alt: $black;
 $button-radius: $global-radius;
