@@ -37,7 +37,9 @@
         <span data-geo="country_short"></span>
         <span data-geo="place_id"></span>
       </div>
-      <div id="weather"></div>
+      <div id="weather">
+        <ul class="accordion" data-allow-all-closed="true" data-responsive-accordion-tabs="accordion large-tabs"></ul>
+      </div>
     </main>
     
 
@@ -48,7 +50,8 @@
     <script src="js/jquery.geocomplete.min.js"></script>
     <script src="js/app.js"></script>
     <script>
-      $(document).foundation();
+      // Foundation plugins are being called at the element level due to some being created dynamically in JS
+//      $(document).foundation();
     </script>
 
   </body>

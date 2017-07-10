@@ -6,7 +6,7 @@ const $searchFld = $('#search-fld');
 const $clearBtn = $('#clear-btn');
 const $locDetails = $('#location-details');
 const $map = $('#map');
-const $weather = $('#weather');
+const $weather = $('#weather ul');
 
 // Variables to hold location data elements
 const $geoLat = $('[data-geo="lat"]');
@@ -72,17 +72,25 @@ let weatherHtml = function (data) {
   let wind = Math.round(data.wind.speed);
   let temp = Math.round(data.main.temp);
   let html =
-    `<i class="owf owf owf-${data.weather[0].id}"></i>
-    <div>
-      <p>${data.name}</p>
-      <p>${desc}</p>
-    </div>
-    <div>
-      <p>Wind ${dir}</p>
-      <p>${wind} mph</p>
-    </div>
-    <p>${temp}&deg;</p>`;
-  $weather.append(html);
+    `<li class="accordion-item is-active" data-accordion-item>
+      <a href="#" class="accordion-title">Today's Weather</a>
+      <div class="accordion-content" data-tab-content>
+        <div class="flex-container">
+          <i class="owf owf owf-${data.weather[0].id}"></i>
+          <div class="place">
+            <p>${data.name}</p>
+            <p>${desc}</p>
+          </div>
+          <div class="wind">
+            <p>Wind ${dir}</p>
+            <p>${wind} mph</p>
+          </div>
+          <p class="temp">${temp}&deg;</p>
+        </div>
+      </div>
+    </li>`;
+  // Initialize foundation plugin on accordion
+  $weather.append(html).foundation();
 };
 
 // Function to capitalize first letter of a string
