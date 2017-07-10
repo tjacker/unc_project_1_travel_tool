@@ -6,6 +6,7 @@ const $searchFld = $('#search-fld');
 const $clearBtn = $('#clear-btn');
 const $locDetails = $('#location-details');
 const $map = $('#map');
+const $weather = $('#weather');
 
 // Variables to hold location data elements
 const $geoLat = $('[data-geo="lat"]');
@@ -53,6 +54,7 @@ let refreshData = function () {
     url: urlWeather + weatherParam,
     method: 'GET'
   }).done(function (weather) {
+    weatherHtml(weather);
     console.log(weather);
   });
   // AJAX call for location's 7-day forecast
@@ -62,4 +64,69 @@ let refreshData = function () {
   }).done(function (forecast) {
     console.log(forecast);
   });
+};
+
+let weatherHtml = function (data) {
+  let desc = capitalize(data.weather[0].description);
+  let dir = cardinalDir(data.wind.deg);
+  let wind = Math.round(data.wind.speed);
+  let temp = Math.round(data.main.temp);
+  let html =
+    `<i class="owf owf owf-${data.weather[0].id}"></i>
+    <div>
+      <p>${data.name}</p>
+      <p>${desc}</p>
+    </div>
+    <div>
+      <p>Wind ${dir}</p>
+      <p>${wind} mph</p>
+    </div>
+    <p>${temp}&deg;</p>`;
+  $weather.append(html);
+};
+
+// Function to capitalize first letter of a string
+let capitalize = function (string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+let cardinalDir = function (deg) {
+  switch (true) {
+    case (deg >= 0 && deg <= 11.25):
+      return 'N';
+    case (deg > 11.25 && deg <= 33.75):
+      return 'NNE';
+    case (deg > 33.75 && deg <= 56.25):
+      return 'NE';
+    case (deg > 56.25 && deg <= 78.75):
+      return 'ENE';
+    case (deg > 78.75 && deg <= 101.25):
+      return 'E';
+    case (deg > 101.25 && deg <= 123.75):
+      return 'ESE';
+    case (deg > 123.75 && deg <= 146.25):
+      return 'SE';
+    case (deg > 146.25 && deg <= 168.75):
+      return 'SSE';
+    case (deg > 168.75 && deg <= 191.25):
+      return 'S';
+    case (deg > 191.25 && deg <= 213.75):
+      return 'SSW';
+    case (deg > 213.75 && deg <= 236.25):
+      return 'SW';
+    case (deg > 236.25 && deg <= 258.75):
+      return 'WSW';
+    case (deg > 258.75 && deg <= 281.25):
+      return 'W';
+    case (deg > 281.25 && deg <= 303.75):
+      return 'WNW';
+    case (deg > 303.75 && deg <= 326.25):
+      return 'NW';
+    case (deg > 326.25 && deg <= 348.75):
+      return 'NNW';
+    case (deg > 348.75 && deg <= 360):
+      return 'N';
+    default:
+      return 'E';
+  }
 };
