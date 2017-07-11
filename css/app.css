@@ -18,6 +18,9 @@ twitterwidget.twitter-tweet {
   max-height: 200px !important;
   margin: 10px !important;
 }
+.tweet-hidden {
+  display: hidden;
+}
 
 
 

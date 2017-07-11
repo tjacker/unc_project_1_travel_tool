@@ -12,7 +12,7 @@ $(".button").on("click", function(e) {
   // Variables for AJAX call
   var query = "%23" + $("input").val().trim()
   var limit = "&count="
-  var limitNum = 6
+  var limitNum = 15
   // Black magic that will save this api. Hardcoded into the url belowm but saved as a variable in case needed elsewhere.
   var corsAnywhere = "https://cors.now.sh/" 
 
@@ -35,8 +35,11 @@ $(".button").on("click", function(e) {
     for (var i = 0; i < response.statuses.length; i++) {
       // Create tweet blocks dynamically. Each tweet is given an ID of "tweet-widget-i" where i is the number.
       twttr.widgets.createTweet(response.statuses[i].id_str, document.getElementById("twitter-display"), {
-        cards: "hidden"
+        cards: "hidden",
+        size:"medium"
       });
+      $(".twitter-tweet").addClass(".tweet-hidden")
+
       
     }
     
