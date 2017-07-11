@@ -167,7 +167,7 @@ let weatherHtml = function (data) {
 
 // Function to create and return the HTML for forecasted weather information
 let forecastHtml = function (data) {
-  let days = ``;
+  let days = ``; // Define as an empty template literal
   let id = data.city.id;
   // Build daily forecast section
   $.each(data.list, function(i, day) {
@@ -200,6 +200,22 @@ let forecastHtml = function (data) {
       </div>
     </li>`;
   return html;
+};
+
+// Function to create and return the HTML for best rated restaurants
+let restaurantsHtml = function (data) {
+  let places = ``; // Define as an empty template literal
+  // Build restaurant detail section
+  $.each(places.best_rated_restaurant, function(i, place) {
+    let img = place.restaurant.featured_image;
+    let name = place.restaurant.name;
+    let loc = place.restaurant.location.locality;
+    let type = place.restaurant.cuisines;
+    let rating = place.restaurant.user_rating.aggregate_rating;
+    let votes = place.restaurant.user_rating.votes;
+    
+    
+  });
 };
 
 // Function to capitalize first letter of a string
