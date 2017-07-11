@@ -13,10 +13,12 @@
 
 twitterwidget.twitter-tweet {
   display: inline-block !important;
-  max-width: 500px !important;
+  max-width: 400px !important;
   min-width: 200px !important;
+  max-height: 200px !important;
   margin: 10px !important;
 }
+
 
 
 /*---------- ZD - This is the end of my twitter styling ----------*/

@@ -1,22 +1,22 @@
 $(document).foundation();
 
+// Create a Twitter content Div where everything will go
+var twitDiv = $("<div id='twitter-display'>")
+twitDiv.appendTo($("#twitter-container"))
 
 // Button click funciton
 $(".button").on("click", function(e) {
-  $(".tweet-content").html('<img src="img/loading.gif" width="100px" height="100px" align="center"/>')
+  // The code directly below should empty out the Div each time Submit is clicked
+  twitDiv.html(' ')
   
-  
-
+  // Variables for AJAX call
   var query = "%23" + $("input").val().trim()
   var limit = "&count="
   var limitNum = 6
   // Black magic that will save this api. Hardcoded into the url belowm but saved as a variable in case needed elsewhere.
   var corsAnywhere = "https://cors.now.sh/" 
 
-  
-
- 
-  // Variables for AJAX call
+  // Further AJAX settings
   var settings = {
   "async": true,
   "crossDomain": true,
@@ -30,25 +30,16 @@ $(".button").on("click", function(e) {
   }
   // Ajax Call
   $.ajax(settings).done(function (response) {
-    console.log(response);
-    // Create Div that will hold all tweets. It will be within the container
-    var twitDiv = $("<div id='twitter-display'>")
-    twitDiv.appendTo($("#twitter-container"))
-
-    
-
+    console.log(response);    
     // For loop that will create the tweets according to the number of tweets returned from the API
     for (var i = 0; i < response.statuses.length; i++) {
       // Create tweet blocks dynamically. Each tweet is given an ID of "tweet-widget-i" where i is the number.
-      twttr.widgets.createTweet(response.statuses[i].id_str, document.getElementById("twitter-display"));
-      $(".EmbeddedTweet-tweet").attr("data-cards", "hidden")
-
+      twttr.widgets.createTweet(response.statuses[i].id_str, document.getElementById("twitter-display"), {
+        cards: "hidden"
+      });
       
-      // This may be used later. Just commented out for now
-      /* setTimeout(function() {
-        $(".tweet").html(response.statuses[i].text)  
-      }, 3000) */
     }
+    
   });
 }) 
 
