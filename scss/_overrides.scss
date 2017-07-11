@@ -5,6 +5,9 @@
 //
 //   0. Mixins
 //   1. Base Elements
+//   2. Search Menu
+//   3. Map
+//   4. Weather
 
 // 0. Mixins
 // ----------------
@@ -14,19 +17,32 @@
 // 1. Base Elements
 // ----------------
 
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 
+main {
+  flex-grow: 1;
+}
 
-// 1. Search Menu
+// 2. Search Menu
 // ----------------
 
 .top-bar {
   @include breakpoint(medium down) {
     flex-direction: column;
   }
-  .site-logo {
-    width: 3rem;
-    @include breakpoint(large) {
-      width: 3.5rem;
+  .top-bar-left {
+    @include breakpoint(medium down) {
+      margin-bottom: 1rem;
+    }
+    .site-logo {
+      width: 3rem;
+      @include breakpoint(large) {
+        width: 3.5rem;
+      }
     }
   }
   .menu {
@@ -39,11 +55,93 @@
     height: 40px;
   }
   input {
+    min-width: $topbar-input-width;
+    margin-right: 0;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
   }
   button {
+    font-weight: 600;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+  }
+}
+
+// 3. Map
+// ----------------
+
+#map {
+  width: 100%;
+  height: 200px;
+}
+
+// 4. Weather
+// ----------------
+
+#weather {
+  p {
+    line-height: 1.1;
+  }
+  a {
+    outline: none;
+  }
+  .accordion-title,
+  .tabs-title {
+    font-weight: 600;
+    transition: background-color 0.25s ease-out;
+  }
+  .flex-container {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    @include breakpoint(small only) {
+      .place {
+        width: 100%;
+        order: 4;
+        margin-top: 0.5rem;
+      }
+    }
+    @include breakpoint(medium) {
+      justify-content: space-around;
+    }
+    .place,
+    .temp {
+      p:first-of-type {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+    }
+  }
+  .forecast {
+    flex-direction: column;
+    text-align: center;
+    p:first-of-type {
+      padding-bottom: 0.5rem;
+    }
+    .owf {
+      font-size: 3rem;
+    }
+  }
+  .is-active {
+    a {
+      color: $white;
+      background-color: $primary-color;
+    }
+  }
+  .owf {
+    font-size: 3.5rem;
+    color: $icon-color;
+  }
+  .more-info {
+    text-align: right;
+    margin-bottom: 0.25rem;
+    a {
+      font-weight: 600;
+      color: $primary-color;
+      background-color: inherit;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }

@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Travel Site - name TBD</title>
     <link href="https://fonts.googleapis.com/css?family=Cabin:600,700|Source+Sans+Pro:400,600" rel="stylesheet">
+    <link rel="stylesheet" href="css/owfont-regular.css">
     <link rel="stylesheet" href="css/app.css" />
   </head>
   <body>
-    <div class="top-bar" id="search-menu">
+    <header class="top-bar" id="search-menu">
       <div class="top-bar-left">
         <ul class="menu">
           <li><img class="site-logo" src="img/suitcase.svg" alt="Suitcase logo"></li>
@@ -18,13 +19,47 @@
       </div>
       <div class="top-bar-right">
         <ul class="menu">
-          <li><input type="search" placeholder="Location"></li>
-          <li><button type="button" class="button">Search</button></li>
+          <li><input id="search-fld" type="search" placeholder="Location"></li>
+          <li><button id="clear-btn" type="button" class="button">Clear</button></li>
         </ul>
       </div>
+
     </div>
     <div class="container" id="twitter-container">
     </div>
+    </header>
+    <main>
+      <div id="map"></div>
+      <div id="location-details" style="display: none">
+        <span data-geo="name"></span>
+        <span data-geo="lat"></span>
+        <span data-geo="lng"></span>
+        <span data-geo="location"></span>
+        <span data-geo="locality"></span>
+        <span data-geo="administrative_area_level_1"></span>
+        <span data-geo="country"></span>
+        <span data-geo="country_short"></span>
+        <span data-geo="place_id"></span>
+      </div>
+      <div id="weather"></div>
+      <div id="food">
+        <div>
+          <img src="https://d.zmtcdn.com/data/pictures/chains/8/16774318/a54deb9e4dbb79dd7c8091b30c642077_featured_v2.png" alt="">
+          <p class="rest-type">Seafood</p>
+          <p class="rest-rating">4.4 <span>&frasl; 5</span></p>
+          <p class="rest-votes">126</p>
+        </div>
+        <div>
+          <p class="rest-name">Otto Enoteca &amp; Pizzeria</p>
+          <div>
+            <p class="rest-location">East Plano</p>
+            <a href="https://www.zomato.com/plano-tx/fish-shack-east-plano?utm_source=api_basic_user&utm_medium=api&utm_campaign=v2.1" target="_blank">Details</a>
+          </div>
+        </div>
+      </div>
+      
+      
+    </main>
 
     
     <script src="js/jquery.min.js"></script>
@@ -47,9 +82,13 @@
     </script>
     <script src="js/what-input.min.js"></script>
     <script src="js/foundation.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArp8rpsILlsAxbEpXI3A4kQab_5RErYNY&libraries=places"></script>
+    <script src="js/jquery.geocomplete.min.js"></script>
     <script src="js/app.js"></script>
     <script>
-      $(document).foundation();
+      // Foundation plugins are being called at the element level due to some being created dynamically in JS
+//      $(document).foundation();
     </script>
   </body>
 </html>
