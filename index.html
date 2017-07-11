@@ -23,6 +23,10 @@
           <li><button id="clear-btn" type="button" class="button">Clear</button></li>
         </ul>
       </div>
+
+    </div>
+    <div class="container" id="twitter-container">
+    </div>
     </header>
     <main>
       <div id="map"></div>
@@ -57,7 +61,25 @@
       
     </main>
 
+    
     <script src="js/jquery.min.js"></script>
+    <script>window.twttr = (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+        if (d.getElementById(id)) return t;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://platform.twitter.com/widgets.js";
+        fjs.parentNode.insertBefore(js, fjs);
+
+        t._e = [];
+        t.ready = function(f) {
+          t._e.push(f);
+        };
+
+        return t;
+      }(document, "script", "twitter-wjs"));
+    </script>
     <script src="js/what-input.min.js"></script>
     <script src="js/foundation.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
@@ -68,6 +90,5 @@
       // Foundation plugins are being called at the element level due to some being created dynamically in JS
 //      $(document).foundation();
     </script>
-
   </body>
 </html>
