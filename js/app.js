@@ -1,5 +1,5 @@
 /*jslint esversion: 6, browser: true*/
-/*global window, console, $, jQuery, alert*/
+/*global window, console, $, jQuery, moment, alert*/
 
 // Variables to hold DOM elements
 const $searchFld = $('#search-fld');
@@ -54,18 +54,24 @@ let refreshData = function () {
     url: urlWeather + weatherParam,
     method: 'GET'
   }).done(function (weather) {
-    weatherHtml(weather);
+    // Call function to populate current weather and append
+    $weather.append(weatherHtml(weather));
     console.log(weather);
-  });
-  // AJAX call for location's 7-day forecast
-  $.ajax({
-    url: urlForecast + weatherParam,
-    method: 'GET'
-  }).done(function (forecast) {
-    console.log(forecast);
+    // Nested AJAX call for location's 7-day forecast
+    $.ajax({
+      url: urlForecast + weatherParam,
+      method: 'GET'
+    }).done(function (forecast) {
+      // Call function to populate forecasted weather and append
+      $weather.append(forecastHtml(forecast));
+      // Initialize foundation plugin on accordion
+      $weather.foundation();
+      console.log(forecast);
+    });
   });
 };
 
+// Function to create and return the HTML for current weather information
 let weatherHtml = function (data) {
   let desc = capitalize(data.weather[0].description);
   let dir = cardinalDir(data.wind.deg);
@@ -73,7 +79,7 @@ let weatherHtml = function (data) {
   let temp = Math.round(data.main.temp);
   let html =
     `<li class="accordion-item is-active" data-accordion-item>
-      <a href="#" class="accordion-title">Today's Weather</a>
+      <a href="#" class="accordion-title">Current Weather</a>
       <div class="accordion-content" data-tab-content>
         <div class="flex-container">
           <i class="owf owf owf-${data.weather[0].id}"></i>
@@ -85,12 +91,49 @@ let weatherHtml = function (data) {
             <p>Wind ${dir}</p>
             <p>${wind} mph</p>
           </div>
-          <p class="temp">${temp}&deg;</p>
+          <div class="temp">
+            <p>${temp}&deg;</p>
+            <p>Hum. ${data.main.humidity}%</p>
+          </div>
         </div>
       </div>
     </li>`;
-  // Initialize foundation plugin on accordion
-  $weather.append(html).foundation();
+  return html;
+};
+
+// Function to create and return the HTML for forecasted weather information
+let forecastHtml = function (data) {
+  let days = ``;
+  // Build daily forecast section
+  $.each(data.list, function(i, day) {
+    let date = formatDay(day.dt);
+    let icon = day.weather[0].id;
+    let high = Math.round(day.temp.max);
+    let low = Math.round(day.temp.min);
+    let show = '';
+    // Classes to show forecast days 6 and 7 based on screen width
+    if (i === 5) {
+      show = 'show-for-medium ';
+    } else if (i === 6) {
+      show = 'show-for-large ';
+    }
+    days += 
+      `<div class="${show}forecast flex-container">
+        <p><strong>${date}</strong></p>
+        <i class="owf owf owf-${icon}"></i>
+        <p><strong>${high}&deg;</strong> ${low}&deg;</p>
+      </div>`;
+  });
+  let html =
+    `<li class="accordion-item" data-accordion-item>
+      <a href="#" class="accordion-title">Daily Forecast</a>
+      <div class="accordion-content" data-tab-content>
+        <div class="flex-container">
+         ${days}
+        </div>
+      </div>
+    </li>`;
+  return html;
 };
 
 // Function to capitalize first letter of a string
@@ -137,4 +180,9 @@ let cardinalDir = function (deg) {
     default:
       return 'E';
   }
+};
+
+let formatDay = function (time) {
+  console.log(time);
+  return moment.unix(time).format('ddd');
 };
