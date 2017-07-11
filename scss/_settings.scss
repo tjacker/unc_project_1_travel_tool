@@ -70,8 +70,8 @@ $global-width: rem-calc(1200);
 $global-lineheight: 1.5;
 // Custom Color Variables
 $topbar-blue: #133c55;
-$icon-color: #545e75;
-$highlight-color: #dfe1e5;
+$icon-color: rgba($topbar-blue, 0.85);
+$highlight-color: #f6f6e8;
 // ----------------------
 $foundation-palette: (
   primary: #fb7064, // #1779ba
@@ -94,7 +94,7 @@ $global-padding: 1rem;
 $global-position: 1rem;
 $global-weight-normal: 400; // normal
 $global-weight-bold: 600; // bold
-$global-radius: 5px; // 0
+$global-radius: 0;
 $global-menu-padding: 0 1rem; // 0.7rem 1rem
 $global-menu-nested-margin: 1rem;
 $global-text-direction: ltr;
@@ -230,12 +230,12 @@ $accordion-background: $white;
 $accordion-plusminus: true;
 $accordion-title-font-size: rem-calc(16); // rem-calc(12)
 $accordion-item-color: $primary-color;
-$accordion-item-background-hover: $highlight-color; // $light-gray
+$accordion-item-background-hover: $white; // $light-gray
 $accordion-item-padding: 1rem; // 1.25rem 1rem
 $accordion-content-background: $white;
 $accordion-content-border: 1px solid $light-gray;
 $accordion-content-color: $body-font-color;
-$accordion-content-padding: 1rem;
+$accordion-content-padding: 0 1rem 1rem; // 1rem
 
 // 8. Accordion Menu
 // -----------------
@@ -794,7 +794,7 @@ $table-stack-breakpoint: medium;
 $tab-margin: 0;
 $tab-background: $white;
 $tab-color: $primary-color;
-$tab-background-active: $highlight-color; // $light-gray
+$tab-background-active: $white; // $light-gray
 $tab-active-color: $primary-color;
 $tab-item-font-size: rem-calc(16); // rem-calc(12)
 $tab-item-background-hover: $white;
@@ -803,7 +803,7 @@ $tab-expand-max: 6;
 $tab-content-background: $white;
 $tab-content-border: $light-gray;
 $tab-content-color: $body-font-color;
-$tab-content-padding: 1rem;
+$tab-content-padding: 0 1rem 1rem; // 1rem
 
 // 52. Thumbnail
 // -------------

@@ -6,11 +6,13 @@ const $searchFld = $('#search-fld');
 const $clearBtn = $('#clear-btn');
 const $locDetails = $('#location-details');
 const $map = $('#map');
-const $weather = $('#weather ul');
+const $weather = $('#weather');
 
-// Variables to hold location data elements
+// Variables to hold location data elements and value
 const $geoLat = $('[data-geo="lat"]');
 const $geoLng = $('[data-geo="lng"]');
+let latitude = '';
+let longitude = '';
 
 // Call Geocomplete plugin to create autocomplete field and interactive map
 $searchFld.geocomplete({
@@ -30,14 +32,21 @@ $searchFld.geocomplete({
 
 // Clear button click event to remove text from search input
 $clearBtn.click(function () {
-  $searchFld.val('');
+  $searchFld.val('').focus();
 });
 
 // Function to refresh location data based on new search term
 let refreshData = function () {
+  // Remove all children and bound events from weather container
+  $weather.children().remove();
+  // Variable to hold responsive accordion and tabs container
+  let ul = '<ul class="accordion" data-allow-all-closed="true" data-responsive-accordion-tabs="accordion large-tabs"></ul>';
+  // Append ul and create variable to hold new element
+  $weather.append(ul);
+  let $weatherUl = $('#weather ul');
   // Get stored latitude and longitude values
-  let latitude = $geoLat.text();
-  let longitude = $geoLng.text();
+  latitude = $geoLat.text();
+  longitude = $geoLng.text();
   // Store OpenWeatherMap API key and URLs
   let apiKeyOwm = '2a6299aeb6ba1831330eb81d8e215b1d';
   let urlWeather = 'https://cors-anywhere.herokuapp.com/api.openweathermap.org/data/2.5/weather?';
@@ -55,7 +64,7 @@ let refreshData = function () {
     method: 'GET'
   }).done(function (weather) {
     // Call function to populate current weather and append
-    $weather.append(weatherHtml(weather));
+    $weatherUl.append(weatherHtml(weather));
     console.log(weather);
     // Nested AJAX call for location's 7-day forecast
     $.ajax({
@@ -63,9 +72,9 @@ let refreshData = function () {
       method: 'GET'
     }).done(function (forecast) {
       // Call function to populate forecasted weather and append
-      $weather.append(forecastHtml(forecast));
+      $weatherUl.append(forecastHtml(forecast));
       // Initialize foundation plugin on accordion
-      $weather.foundation();
+      $weatherUl.foundation();
       console.log(forecast);
     });
   });
@@ -73,6 +82,7 @@ let refreshData = function () {
 
 // Function to create and return the HTML for current weather information
 let weatherHtml = function (data) {
+  let id = data.id;
   let desc = capitalize(data.weather[0].description);
   let dir = cardinalDir(data.wind.deg);
   let wind = Math.round(data.wind.speed);
@@ -81,6 +91,7 @@ let weatherHtml = function (data) {
     `<li class="accordion-item is-active" data-accordion-item>
       <a href="#" class="accordion-title">Current Weather</a>
       <div class="accordion-content" data-tab-content>
+        <div class="more-info"><a  href="https://openweathermap.org/city/${id}" target="_blank">More Info</a></div>
         <div class="flex-container">
           <i class="owf owf owf-${data.weather[0].id}"></i>
           <div class="place">
@@ -104,6 +115,7 @@ let weatherHtml = function (data) {
 // Function to create and return the HTML for forecasted weather information
 let forecastHtml = function (data) {
   let days = ``;
+  let id = data.city.id;
   // Build daily forecast section
   $.each(data.list, function(i, day) {
     let date = formatDay(day.dt);
@@ -128,6 +140,7 @@ let forecastHtml = function (data) {
     `<li class="accordion-item" data-accordion-item>
       <a href="#" class="accordion-title">Daily Forecast</a>
       <div class="accordion-content" data-tab-content>
+        <div class="more-info"><a  href="https://openweathermap.org/city/${id}" target="_blank">More Info</a></div>
         <div class="flex-container">
          ${days}
         </div>
@@ -183,6 +196,5 @@ let cardinalDir = function (deg) {
 };
 
 let formatDay = function (time) {
-  console.log(time);
   return moment.unix(time).format('ddd');
 };

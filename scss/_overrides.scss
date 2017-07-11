@@ -82,6 +82,9 @@ main {
   p {
     line-height: 1.1;
   }
+  a {
+    outline: none;
+  }
   .accordion-title,
   .tabs-title {
     font-weight: 600;
@@ -97,6 +100,9 @@ main {
         order: 4;
         margin-top: 0.5rem;
       }
+    }
+    @include breakpoint(medium) {
+      justify-content: space-around;
     }
     .place,
     .temp {
@@ -116,8 +122,26 @@ main {
       font-size: 3rem;
     }
   }
+  .is-active {
+    a {
+      color: $white;
+      background-color: $primary-color;
+    }
+  }
   .owf {
     font-size: 3.5rem;
     color: $icon-color;
+  }
+  .more-info {
+    text-align: right;
+    margin-bottom: 0.25rem;
+    a {
+      font-weight: 600;
+      color: $primary-color;
+      background-color: inherit;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }
