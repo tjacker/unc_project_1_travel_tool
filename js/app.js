@@ -9,14 +9,19 @@ const $map = $('#map');
 const $weather = $('#weather');
 const $food= $('#food');
 const $twitter= $('#twitter');
+// Variable to hold responsive accordion and tabs container
+const ul = '<ul class="accordion" data-allow-all-closed="true" data-responsive-accordion-tabs="accordion large-tabs"></ul>';
 
 // Variables to hold location data elements and value
 const $geoLat = $('[data-geo="lat"]');
 const $geoLng = $('[data-geo="lng"]');
 const $geoLoc = $('[data-geo="locality"]');
+const $geoSubLoc = $('[data-geo="sublocality"]');
 let lat = '';
 let lng = '';
 let loc = '';
+
+const imgInfo = 'img/info.svg';
 
 let searchDist = 50; // Search Distance in miles
 
@@ -36,7 +41,12 @@ $searchFld.geocomplete({
   // Get stored latitude and longitude values
   lat = $geoLat.text();
   lng = $geoLng.text();
-  loc = $geoLoc.text().trim();
+  // If locality returns empty, use sub locality
+  if ($geoLoc.text()) {
+    loc = $geoLoc.text().trim(); 
+  } else {
+    loc = $geoSubLoc.text().trim();
+  }
   // Call refresh function passing latitude and longitude values
   refreshData(lat, lng);
 });
@@ -65,8 +75,6 @@ let refreshData = function (lat, lng) {
 
 // Function to hold weather AJAX requests
 let weatherAjax = function () {
-  // Variable to hold responsive accordion and tabs container
-  let ul = '<ul class="accordion" data-allow-all-closed="true" data-responsive-accordion-tabs="accordion large-tabs"></ul>';
   // Append ul and create variable to hold new element
   $weather.append(ul);
   let $weatherUl = $('#weather ul');
@@ -88,7 +96,6 @@ let weatherAjax = function () {
   }).done(function (weather) {
     // Call function to populate current weather and append
     $weatherUl.append(weatherHtml(weather));
-    console.log(weather);
     // Nested AJAX call for location's 7-day forecast
     $.ajax({
       url: urlForecast + param,
@@ -98,13 +105,15 @@ let weatherAjax = function () {
       $weatherUl.append(forecastHtml(forecast));
       // Initialize foundation plugin on accordion
       $weatherUl.foundation();
-      console.log(forecast);
     });
   });
 };
 
 // Function to hold food AJAX request
 let foodAjax = function () {
+  // Append ul and create variable to hold new element
+  $food.append(ul);
+  let $foodUl = $('#food ul');
   // Store Zomato API key and URLs
   let apiKey = '2a5e7c3416abfd7e68eb4e7d9cdac4b9';
   let urlLocate = 'https://developers.zomato.com/api/v2.1/locations?';
@@ -137,6 +146,9 @@ let foodAjax = function () {
       url: urlDetail + locDetail
     }).done(function (places) {
       console.log(places);
+      // Call function to populate best restaurants and append
+      $foodUl.append(restaurantsHtml(places));
+      $foodUl.foundation();
     });
   });
 };
@@ -186,7 +198,7 @@ let weatherHtml = function (data) {
     `<li class="accordion-item is-active" data-accordion-item>
       <a href="#" class="accordion-title">Current Weather</a>
       <div class="accordion-content" data-tab-content>
-        <div class="more-info"><a  href="https://openweathermap.org/city/${id}" target="_blank">More Info</a></div>
+        <div class="more-info"><a  href="https://openweathermap.org/city/${id}" target="_blank"><img src="${imgInfo}" alt=""></a></div>
         <div class="flex-container">
           <i class="owf owf owf-${data.weather[0].id}"></i>
           <div class="place">
@@ -220,12 +232,12 @@ let forecastHtml = function (data) {
     let show = '';
     // Classes to show forecast days 6 and 7 based on screen width
     if (i === 5) {
-      show = 'show-for-medium ';
+      show = 'show-for-medium';
     } else if (i === 6) {
-      show = 'show-for-large ';
+      show = 'show-for-large';
     }
     days +=
-      `<div class="${show}forecast flex-container">
+      `<div class="${show} forecast flex-container">
         <p><strong>${date}</strong></p>
         <i class="owf owf owf-${icon}"></i>
         <p><strong>${high}&deg;</strong> ${low}&deg;</p>
@@ -235,7 +247,7 @@ let forecastHtml = function (data) {
     `<li class="accordion-item" data-accordion-item>
       <a href="#" class="accordion-title">Daily Forecast</a>
       <div class="accordion-content" data-tab-content>
-        <div class="more-info"><a  href="https://openweathermap.org/city/${id}" target="_blank">More Info</a></div>
+        <div class="more-info"><a  href="https://openweathermap.org/city/${id}" target="_blank"><img src="${imgInfo}" alt=""></a></div>
         <div class="flex-container">
          ${days}
         </div>
@@ -248,16 +260,48 @@ let forecastHtml = function (data) {
 let restaurantsHtml = function (data) {
   let places = ``; // Define as an empty template literal
   // Build restaurant detail section
-  $.each(places.best_rated_restaurant, function(i, place) {
+  $.each(data.best_rated_restaurant, function(i, place) {
     let img = place.restaurant.featured_image;
     let name = place.restaurant.name;
     let loc = place.restaurant.location.locality;
     let type = place.restaurant.cuisines;
+    let url = place.restaurant.url;
     let rating = place.restaurant.user_rating.aggregate_rating;
+    let ratingColor = place.restaurant.user_rating.rating_color;
     let votes = place.restaurant.user_rating.votes;
-    
-    
+    places +=
+      `<div class="food-container">
+        <div class="flex-container">
+          <div class="img-container">
+            <img src="${img}" alt="">
+            <p class="rest-type">${type}</p>
+          </div>
+          <div class="rating-container flex-container">
+            <p class="rest-rating" style="background-color: #${ratingColor}"><strong>${rating} <span>&frasl; 5</span></strong></p>
+            <p class="rest-votes">${votes} votes</p>
+          </div>
+        </div>
+        <div class="name-container flex-container">
+          <div>
+            <p class="rest-name"><strong>${name}</strong></p>
+            <p class="rest-location">${loc}</p>
+          </div>
+          <div>
+            <p class="more-info"><a href="${url}" target="_blank"><img src="${imgInfo}" alt=""></a></p>
+          </div>
+        </div>
+      </div>`;
   });
+  let html =
+    `<li class="accordion-item" data-accordion-item>
+      <a href="#" class="accordion-title">Best Restaurants</a>
+      <div class="accordion-content" data-tab-content>
+        <div class="flex-container">
+         ${places}
+        </div>
+      </div>
+    </li>`;
+  return html;
 };
 
 // Function to capitalize first letter of a string
@@ -339,7 +383,7 @@ function concert_events() {
 
      $("#events-concert").append(concertURL);
 
-  }
+    }
   });
 }
 
