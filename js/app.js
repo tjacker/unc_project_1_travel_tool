@@ -44,6 +44,7 @@ $clearBtn.click(function () {
   $searchFld.val('').focus();
 });
 
+
 // Function to refresh location data based on new search term
 let refreshData = function (lat, lng) {
   // Remove all children and bound events from weather container
@@ -221,7 +222,7 @@ let forecastHtml = function (data) {
     } else if (i === 6) {
       show = 'show-for-large ';
     }
-    days += 
+    days +=
       `<div class="${show}forecast flex-container">
         <p><strong>${date}</strong></p>
         <i class="owf owf owf-${icon}"></i>
@@ -307,7 +308,126 @@ let formatDay = function (time) {
   return moment.unix(time).format('ddd');
 };
 
+
+// Begin API call for Eventful to list events in local area
+
+
+// function that runs ajax call for event database
+function concert_events() {
+
+  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "concert" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
+  $.ajax({
+    url: queryURL,
+    method: "GET",
+    dataType: "jsonp",
+    crossDomain: true,
+    headers: {
+    "Access-Control-Allow-Origin": "*"
+   }
+  }).done(function(response) {
+    console.log(response);
+
+    // call only shows top ten events returned for each category
+    for(var i = 0; i < 10; i++) {
+
+    // constructing HTML containing event information
+    var concertName = $("<ul>").text(response.events.event[i].title);
+    var concertURL = $("<a>").attr("href", response.events.event[i].url).append(concertName);
+
+     $("#events-concert").append(concertURL);
+
+  }
+  });
+}
+
+function theater_events() {
+
+  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "theatrical+performance" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
+  $.ajax({
+    url: queryURL,
+    method: "GET",
+    dataType: "jsonp",
+    crossDomain: true,
+    headers: {
+    "Access-Control-Allow-Origin": "*"
+   }
+  }).done(function(response) {
+    console.log(response);
+
+    // call only shows top ten events returned for each category
+    for(var i = 0; i < 10; i++) {
+
+    // constructing HTML containing event information
+    var eventName = $("<ul>").text(response.events.event[i].title);
+    var eventURL = $("<a>").attr("href", response.events.event[i].url).append(eventName);
+
+     $("#events-theater").append(eventURL);
+
+  }
+  });
+}
+
+function outdoor_events() {
+
+  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "outdoors" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
+  $.ajax({
+    url: queryURL,
+    method: "GET",
+    dataType: "jsonp",
+    crossDomain: true,
+    headers: {
+    "Access-Control-Allow-Origin": "*"
+   }
+  }).done(function(response) {
+    console.log(response);
+
+    // call only shows top ten events returned for each category
+    for(var i = 0; i < 10; i++) {
+
+    // constructing HTML containing event information
+    var eventName = $("<ul>").text(response.events.event[i].title);
+    var eventURL = $("<a>").attr("href", response.events.event[i].url).append(eventName);
+
+     $("#events-outdoors").append(eventURL);
+
+  }
+  });
+}
+
+function show_events() {
+
+  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "sports" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
+  $.ajax({
+    url: queryURL,
+    method: "GET",
+    dataType: "jsonp",
+    crossDomain: true,
+    headers: {
+    "Access-Control-Allow-Origin": "*"
+   }
+  }).done(function(response) {
+    console.log(response);
+
+    // call only shows top ten events returned for each category
+    for(var i = 0; i < 10; i++) {
+
+    // constructing HTML containing event information
+    var eventName = $("<ul>").text(response.events.event[i].title);
+    var eventURL = $("<a>").attr("href", response.events.event[i].url).append(eventName);
+
+     $("#events-sports").append(eventURL);
+
+  }
+  });
+}
+
+concert_events();
+theater_events();
+outdoor_events();
+show_events();
+
 let cleanString = function (string) {
   return string.replace(/[^A-Za-z0-9_]/g,"");
 };
+
 

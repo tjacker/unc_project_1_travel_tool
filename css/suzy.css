@@ -1,0 +1,22 @@
+
+#events-header {
+  padding: 15px;
+  background-color: #fb7064;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #133c55
+}
+
+#events {
+  background-color: rgba(19,60,85,0.85);
+}
+
+#events-concert, #events-theater, #events-outdoors, #events-sports {
+  display: inline-block !important;
+}
+
+.headingFont {
+  font-size: 1.2rem;
+  font-weight: 400;
+}
