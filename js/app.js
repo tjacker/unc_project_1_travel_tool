@@ -1,5 +1,5 @@
 /*jslint esversion: 6, browser: true*/
-/*global window, console, $, jQuery, moment, alert*/
+/*global window, console, $, jQuery, moment, twttr, alert*/
 
 // Variables to hold DOM elements
 const $searchFld = $('#search-fld');
@@ -8,6 +8,7 @@ const $locDetails = $('#location-details');
 const $map = $('#map');
 const $weather = $('#weather');
 const $food= $('#food');
+const $twitter= $('#twitter');
 
 // Variables to hold location data elements and value
 const $geoLat = $('[data-geo="lat"]');
@@ -53,6 +54,10 @@ let refreshData = function (lat, lng) {
   $food.children().remove();
   // Call function to run AJAX requests for weather
   foodAjax(lat, lng);
+  // Remove all children and bound events from twitter container
+  $twitter.children().remove();
+  // Call function to run AJAX requests for weather
+  twitterAjax(loc);
 };
 
 // Function to hold weather AJAX requests
@@ -130,6 +135,40 @@ let foodAjax = function () {
     }).done(function (places) {
       console.log(places);
     });
+  });
+};
+
+// Function to hold food AJAX request
+let twitterAjax = function () {
+  // Variables for AJAX call
+  var query = `%23${cleanString(loc)}`; // %23 hashtag code. Call function to remove spaces and punctuation from locality
+  var radius = '50mi';
+  var geoCode = `&geocode=${lat},${lng},${radius}`;
+  var tweets = 10;
+  var count = `&count=${tweets}`;
+
+  // Further AJAX settings
+  var settings = {
+  "async": true,
+  "crossDomain": true,
+  "url": "https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/search/tweets.json?q=" + query + geoCode + count,
+  "method": "GET",
+  "headers": {
+    "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANm41QAAAAAAymaZJR9slBVrP0CVnuDkNU1O2Wo%3D3mjc2Z1ym6zMyCWTY7uDiDIn7GivakZg7iGMlt70hZFQhzorUE",
+    "cache-control": "no-cache"
+    }
+  };
+  console.log(settings.url);
+  // Ajax Call
+  $.ajax(settings).done(function (response) {
+    console.log(response);    
+    // For loop that will create the tweets according to the number of tweets returned from the API
+    for (var i = 0; i < response.statuses.length; i++) {
+      // Create tweet blocks dynamically. Each tweet is given an ID of "tweet-widget-i" where i is the number.
+      twttr.widgets.createTweet(response.statuses[i].id_str, document.getElementById("twitter"), {
+        cards: "hidden"
+      });
+    }
   });
 };
 
@@ -268,45 +307,7 @@ let formatDay = function (time) {
   return moment.unix(time).format('ddd');
 };
 
-
-$(document).foundation();
-
-// Button click funciton
-$(".button").on("click", function(e) {
-  // The code directly below should empty out the Div each time Submit is clicked
-  twitDiv.html(' ')
-  
-  // Variables for AJAX call
-  var query = "%23" + loc
-  var limit = "&count="
-  var limitNum = 6
-  // Black magic that will save this api. Hardcoded into the url belowm but saved as a variable in case needed elsewhere.
-  var corsAnywhere = "https://cors.now.sh/" 
-
-  // Further AJAX settings
-  var settings = {
-  "async": true,
-  "crossDomain": true,
-  "url": "https://cors.now.sh/https://api.twitter.com/1.1/search/tweets.json?q=" + "%23" + query + limit + limitNum,
-  "method": "GET",
-  "headers": {
-    "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANm41QAAAAAAymaZJR9slBVrP0CVnuDkNU1O2Wo%3D3mjc2Z1ym6zMyCWTY7uDiDIn7GivakZg7iGMlt70hZFQhzorUE",
-    "cache-control": "no-cache",
-    //"postman-token": "729f86df-93ae-901e-e6c0-2ce5be0bb3c4" // Commented out to test if needed, appears to not be.
-    }
-  }
-  // Ajax Call
-  $.ajax(settings).done(function (response) {
-    console.log(response);    
-    // For loop that will create the tweets according to the number of tweets returned from the API
-    for (var i = 0; i < response.statuses.length; i++) {
-      // Create tweet blocks dynamically. Each tweet is given an ID of "tweet-widget-i" where i is the number.
-      twttr.widgets.createTweet(response.statuses[i].id_str, document.getElementById("twitter-display"), {
-        cards: "hidden"
-      });
-      
-    }
-    
-  });
-}) 
+let cleanString = function (string) {
+  return string.replace(/[^A-Za-z0-9_]/g,"");
+};
 
