@@ -18,6 +18,8 @@ let lat = '';
 let lng = '';
 let loc = '';
 
+let searchDist = 50; // Search Distance in miles
+
 // Call Geocomplete plugin to create autocomplete field and interactive map
 $searchFld.geocomplete({
   map: $map,
@@ -143,7 +145,7 @@ let foodAjax = function () {
 let twitterAjax = function () {
   // Variables for AJAX call
   var query = `%23${cleanString(loc)}`; // %23 hashtag code. Call function to remove spaces and punctuation from locality
-  var radius = '50mi';
+  var radius = `${searchDist}mi`;
   var geoCode = `&geocode=${lat},${lng},${radius}`;
   var tweets = 10;
   var count = `&count=${tweets}`;
@@ -315,7 +317,8 @@ let formatDay = function (time) {
 // function that runs ajax call for event database
 function concert_events() {
 
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "concert" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
+  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "concert" + "&where=" + loc + "," + lng + "&within=" + searchDist + "&date=Future&app_key=sG6J5BXGggtDB32n";
+  
   $.ajax({
     url: queryURL,
     method: "GET",
@@ -342,7 +345,8 @@ function concert_events() {
 
 function theater_events() {
 
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "theatrical+performance" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
+  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "theatrical+performance" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n";
+  console.log(queryURL);
   $.ajax({
     url: queryURL,
     method: "GET",
@@ -369,7 +373,7 @@ function theater_events() {
 
 function outdoor_events() {
 
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "outdoors" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
+  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "outdoors" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n";
   $.ajax({
     url: queryURL,
     method: "GET",
@@ -396,7 +400,7 @@ function outdoor_events() {
 
 function show_events() {
 
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "sports" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
+  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "sports" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n";
   $.ajax({
     url: queryURL,
     method: "GET",
