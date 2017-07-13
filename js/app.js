@@ -27,6 +27,15 @@ const imgInfo = 'img/info.svg';
 
 let searchDist = 50; // Search Distance in miles
 
+// Track event categories returned by AJAX and store event HTML
+let categoryCount = 0;
+let NumCategories = 4;
+// Define as an empty template literals. Defined as var to work with the window object
+var concerts = ``;
+var theater = ``;
+var outdoors = ``;
+var sports = ``;
+
 // Call Geocomplete plugin to create autocomplete field and interactive map
 $searchFld.geocomplete({
   map: $map,
@@ -147,7 +156,7 @@ let foodAjax = function () {
       url: urlDetail + locDetail
     }).done(function (places) {
       // Call function to populate best restaurants and append
-      $foodUl.append(restaurantsHtml(places));
+      $foodUl.append(foodHtml(places));
       $foodUl.foundation();
     });
   });
@@ -161,7 +170,7 @@ let eventAjax = function () {
   // Store Evenful API key and URLs
   let searchTerm = '';
   let apiKey = 'sG6J5BXGggtDB32n';
-  let url = 'http://api.eventful.com/json/events/search?';
+  let url = 'https://api.eventful.com/json/events/search?';
   // Set location and search parameters for AJAX call
   let param = $.param({
     where: `${lat},${lng}`,
@@ -181,11 +190,36 @@ let eventAjax = function () {
       headers: {
       "Access-Control-Allow-Origin": "*"
       }
-    }).done(function (events) {
-      console.log(catgory, events);
+    }).done(function (data) {
+      if(!data.events) {
+        // Handle empty response
+        categoryCount++;
+        console.log(catgory, ": No events");
+      } else if(data.error) {
+        // Handle error
+        console.log(catgory, ": Error");
+      } else {
+        // Track the number of eventful objects returned
+        categoryCount++;
+        // Call function to populate event variables
+        eventHtml(data.events, catgory);
+      }
+      // If category count equals total number of categories, append data
+      if (categoryCount === NumCategories) {
+        $eventUl.append(concerts, theater, outdoors, sports);
+        // Assign is active class to first event section before binding foundation events
+        $eventUl.children().first().addClass('is-active');
+        $eventUl.foundation();
+        // Reset category counter and variables
+        categoryCount = 0;
+        concerts = ``;
+        theater = ``;
+        outdoors = ``;
+        sports = ``;
+      }
     });
   };
-  
+
   request('concerts', 'concerts');
   request('theatrical+performance', 'theater');
   request('outdoors', 'outdoors');
@@ -298,7 +332,7 @@ let forecastHtml = function (data) {
 };
 
 // Function to create and return the HTML for best rated restaurants
-let restaurantsHtml = function (data) {
+let foodHtml = function (data) {
   let places = ``; // Define as an empty template literal
   let img = '';
   // Build restaurant detail section
@@ -352,6 +386,37 @@ let restaurantsHtml = function (data) {
   return html;
 };
 
+// Function to create and return the HTML for local events
+let eventHtml = function (data, category) {
+  console.log(category, data);
+  let events = ``; // Define as an empty template literal
+  let img = '';
+  let capCategory;
+  // Build event detail sections
+  $.each(data.event, function(i, e) {
+    // Call function to capitalize category for section title
+    capCategory = capitalize(category);
+    events +=
+      `<div class="flex-container">
+        <p>${e.title}</p>
+        <p>${e.city_name}, <span>${e.region_abbr}</span></p>
+        <p>${e.start_time}</p>
+        <p class="more-info"><a href="${e.url}" target="_blank"><img src="img/info.svg" alt=""></a></p>
+      </div>`;
+  });
+  
+  window[category] =
+    `<li class="accordion-item" data-accordion-item>
+      <a href="#" class="accordion-title">${capCategory}</a>
+      <div class="accordion-content" data-tab-content>
+        <div class="flex-container">
+         ${events}
+        </div>
+      </div>
+    </li>`;
+  return window[category];
+};
+
 // Function to capitalize first letter of a string
 let capitalize = function (string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -401,35 +466,6 @@ let cardinalDir = function (deg) {
 let formatDay = function (time) {
   return moment.unix(time).format('ddd');
 };
-
-
-function show_events() {
-
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "sports" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n";
-  $.ajax({
-    url: queryURL,
-    method: "GET",
-    dataType: "jsonp",
-    crossDomain: true,
-    headers: {
-    "Access-Control-Allow-Origin": "*"
-   }
-  }).done(function(response) {
-//    console.log(response);
-
-    // call only shows top ten events returned for each category
-    for(var i = 0; i < 10; i++) {
-
-    // constructing HTML containing event information
-    var eventName = $("<ul>").text(response.events.event[i].title);
-    var eventURL = $("<a>").attr("href", response.events.event[i].url).append(eventName);
-
-     $("#events-sports").append(eventURL);
-
-  }
-  });
-}
-
 
 let cleanString = function (string) {
   return string.replace(/[^A-Za-z0-9_]/g,"");

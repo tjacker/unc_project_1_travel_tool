@@ -122,10 +122,12 @@ a {
 // ----------------
 
 #weather {
+  @include titles;
+  @include active;
+  @include links;
   p {
     line-height: 1.1;
   }
-  @include titles
   .accordion-content,
   .tabs-panel {
     padding-bottom: 1.5rem;
@@ -174,15 +176,16 @@ a {
     font-size: 3.5rem;
     color: $icon-color;
   }
-  @include active;
-  @include links;
+  
 }
 
 // 5. Food
 // ----------------
 
 #food {
-  @include titles
+  @include titles;
+  @include active;
+  @include links;
   .accordion-content,
   .tabs-panel {
     padding-top: 1rem;
@@ -227,7 +230,8 @@ a {
     }
     align-items: flex-end;
     .rest-rating {
-      font-size: 1.25rem;
+//      width: 60px;
+      font-size: 1.2rem;
       color: $white;
       padding: 0.25rem 0.5rem;
       @include breakpoint(small only) {
@@ -241,6 +245,9 @@ a {
     .rest-votes {
       text-align: right;
       font-weight: 600;
+      @include breakpoint(medium) {
+        width: 75px; // Prevent line from wrapping
+      }
     }
   }
   .name-container {
@@ -255,14 +262,16 @@ a {
       font-size: 1.125rem;
     }
   }
-  @include active;
-  @include links;
 }
 
 // 6. Events
 // ----------------
 
-
+#event {
+  @include titles;
+  @include active;
+  @include links;
+}
 
 // 7. Footer
 // ----------------
