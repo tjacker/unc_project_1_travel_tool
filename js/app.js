@@ -8,6 +8,7 @@ const $locDetails = $('#location-details');
 const $map = $('#map');
 const $weather = $('#weather');
 const $food= $('#food');
+const $event= $('#event');
 const $twitter= $('#twitter');
 // Variable to hold responsive accordion and tabs container
 const ul = '<ul class="accordion" data-allow-all-closed="true" data-responsive-accordion-tabs="accordion large-tabs"></ul>';
@@ -21,6 +22,7 @@ let lat = '';
 let lng = '';
 let loc = '';
 
+// More info icon location
 const imgInfo = 'img/info.svg';
 
 let searchDist = 50; // Search Distance in miles
@@ -59,18 +61,16 @@ $clearBtn.click(function () {
 
 // Function to refresh location data based on new search term
 let refreshData = function (lat, lng) {
-  // Remove all children and bound events from weather container
+  // Remove all children and bound events from containers
   $weather.children().remove();
-  // Call function to run AJAX requests for weather
-  weatherAjax(lat, lng);
-  // Remove all children and bound events from food container
   $food.children().remove();
-  // Call function to run AJAX requests for weather
-  foodAjax(lat, lng);
-  // Remove all children and bound events from twitter container
+  $event.children().remove();
   $twitter.children().remove();
-  // Call function to run AJAX requests for weather
-  twitterAjax(loc);
+  // Call functions to run AJAX requests
+  weatherAjax();
+  foodAjax();
+  eventAjax();
+  twitterAjax();
 };
 
 // Function to hold weather AJAX requests
@@ -95,6 +95,7 @@ let weatherAjax = function () {
     method: 'GET'
   }).done(function (weather) {
     // Call function to populate current weather and append
+    console.log(weather);
     $weatherUl.append(weatherHtml(weather));
     // Nested AJAX call for location's 7-day forecast
     $.ajax({
@@ -145,12 +146,50 @@ let foodAjax = function () {
       },
       url: urlDetail + locDetail
     }).done(function (places) {
-      console.log(places);
       // Call function to populate best restaurants and append
       $foodUl.append(restaurantsHtml(places));
       $foodUl.foundation();
     });
   });
+};
+
+// Function to hold event AJAX requests
+let eventAjax = function () {
+  // Append ul and create variable to hold new element
+  $event.append(ul);
+  let $eventUl = $('#event ul');
+  // Store Evenful API key and URLs
+  let searchTerm = '';
+  let apiKey = 'sG6J5BXGggtDB32n';
+  let url = 'http://api.eventful.com/json/events/search?';
+  // Set location and search parameters for AJAX call
+  let param = $.param({
+    where: `${lat},${lng}`,
+    within: searchDist,
+    date: 'Future',
+    app_key: apiKey
+  });
+  
+  // Function to call AJAX request with search parameter and category
+  let request = function (search, catgory) {
+    searchTerm = `&keywords=${search}&`;
+    $.ajax({
+      url: url + searchTerm + param,
+      method: "GET",
+      dataType: "jsonp",
+      crossDomain: true,
+      headers: {
+      "Access-Control-Allow-Origin": "*"
+      }
+    }).done(function (events) {
+      console.log(catgory, events);
+    });
+  };
+  
+  request('concerts', 'concerts');
+  request('theatrical+performance', 'theater');
+  request('outdoors', 'outdoors');
+  request('sports', 'sports');
 };
 
 // Function to hold food AJAX request
@@ -173,10 +212,10 @@ let twitterAjax = function () {
     "cache-control": "no-cache"
     }
   };
-  console.log(settings.url);
+//  console.log(settings.url);
   // Ajax Call
   $.ajax(settings).done(function (response) {
-    console.log(response);    
+//    console.log(response);    
     // For loop that will create the tweets according to the number of tweets returned from the API
     for (var i = 0; i < response.statuses.length; i++) {
       // Create tweet blocks dynamically. Each tweet is given an ID of "tweet-widget-i" where i is the number.
@@ -293,7 +332,7 @@ let restaurantsHtml = function (data) {
       </div>`;
   });
   let html =
-    `<li class="accordion-item" data-accordion-item>
+    `<li class="accordion-item is-active" data-accordion-item>
       <a href="#" class="accordion-title">Best Restaurants</a>
       <div class="accordion-content" data-tab-content>
         <div class="flex-container">
@@ -355,93 +394,6 @@ let formatDay = function (time) {
 };
 
 
-// Begin API call for Eventful to list events in local area
-
-
-// function that runs ajax call for event database
-function concert_events() {
-
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "concert" + "&where=" + loc + "," + lng + "&within=" + searchDist + "&date=Future&app_key=sG6J5BXGggtDB32n";
-  
-  $.ajax({
-    url: queryURL,
-    method: "GET",
-    dataType: "jsonp",
-    crossDomain: true,
-    headers: {
-    "Access-Control-Allow-Origin": "*"
-   }
-  }).done(function(response) {
-    console.log(response);
-
-    // call only shows top ten events returned for each category
-    for(var i = 0; i < 10; i++) {
-
-    // constructing HTML containing event information
-    var concertName = $("<ul>").text(response.events.event[i].title);
-    var concertURL = $("<a>").attr("href", response.events.event[i].url).append(concertName);
-
-     $("#events-concert").append(concertURL);
-
-    }
-  });
-}
-
-function theater_events() {
-
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "theatrical+performance" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n";
-  console.log(queryURL);
-  $.ajax({
-    url: queryURL,
-    method: "GET",
-    dataType: "jsonp",
-    crossDomain: true,
-    headers: {
-    "Access-Control-Allow-Origin": "*"
-   }
-  }).done(function(response) {
-    console.log(response);
-
-    // call only shows top ten events returned for each category
-    for(var i = 0; i < 10; i++) {
-
-    // constructing HTML containing event information
-    var eventName = $("<ul>").text(response.events.event[i].title);
-    var eventURL = $("<a>").attr("href", response.events.event[i].url).append(eventName);
-
-     $("#events-theater").append(eventURL);
-
-  }
-  });
-}
-
-function outdoor_events() {
-
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "outdoors" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n";
-  $.ajax({
-    url: queryURL,
-    method: "GET",
-    dataType: "jsonp",
-    crossDomain: true,
-    headers: {
-    "Access-Control-Allow-Origin": "*"
-   }
-  }).done(function(response) {
-    console.log(response);
-
-    // call only shows top ten events returned for each category
-    for(var i = 0; i < 10; i++) {
-
-    // constructing HTML containing event information
-    var eventName = $("<ul>").text(response.events.event[i].title);
-    var eventURL = $("<a>").attr("href", response.events.event[i].url).append(eventName);
-
-     $("#events-outdoors").append(eventURL);
-
-  }
-  });
-}
-
 function show_events() {
 
   var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "sports" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n";
@@ -454,7 +406,7 @@ function show_events() {
     "Access-Control-Allow-Origin": "*"
    }
   }).done(function(response) {
-    console.log(response);
+//    console.log(response);
 
     // call only shows top ten events returned for each category
     for(var i = 0; i < 10; i++) {
@@ -469,10 +421,6 @@ function show_events() {
   });
 }
 
-concert_events();
-theater_events();
-outdoor_events();
-show_events();
 
 let cleanString = function (string) {
   return string.replace(/[^A-Za-z0-9_]/g,"");
