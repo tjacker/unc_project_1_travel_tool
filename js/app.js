@@ -1,6 +1,27 @@
 /*jslint esversion: 6, browser: true*/
 /*global window, console, $, jQuery, moment, twttr, alert*/
 
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyBi2lJmlRe28qRD5BixY5rJgKdunSOKz44",
+  authDomain: "coding-bootcamp-project-15d09.firebaseapp.com",
+  databaseURL: "https://coding-bootcamp-project-15d09.firebaseio.com",
+  projectId: "coding-bootcamp-project-15d09",
+  storageBucket: "coding-bootcamp-project-15d09.appspot.com",
+  messagingSenderId: "174217526226"
+};
+firebase.initializeApp(config);
+
+// Database variable
+const database = firebase.database();
+
+// Pull data from Firebase
+$.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", method: "get"
+  }).done(function(response) {
+    console.log(Object.keys(response))
+  })
+
+
 // Variables to hold DOM elements
 const $searchFld = $('#search-fld');
 const $clearBtn = $('#clear-btn');
@@ -52,12 +73,47 @@ $searchFld.geocomplete({
   // Get stored latitude and longitude values
   lat = $geoLat.text();
   lng = $geoLng.text();
+  loc = $geoLoc.text().trim();
+
+  
   // If locality returns empty, use sub locality
   if ($geoLoc.text()) {
     loc = $geoLoc.text().trim(); 
   } else {
     loc = $geoSubLoc.text().trim();
   }
+  // This zone pushes information to firebase
+  /*--------------------------------------------------------------------------------------*/
+  // Setting data in firebase
+  
+  var locCounter = 1
+  
+  // Addition put into object
+  var searchObj = {}
+  searchObj.location = loc;
+  searchObj.counter = locCounter;
+
+  // Push additions to the database array
+  // database.ref().push(searchObj)
+
+  locationRef = database.ref();
+  locationRef.once("value", function(snapshot) {
+    var dbObj = snapshot.val();
+    if (snapshot.hasChild(loc)) {
+      var currentLoc = dbObj[loc];
+      console.log("currentLoc:", currentLoc);
+      console.log('currentLoc type', typeof currentLoc.counter);
+      searchObj.counter = currentLoc.counter + 1;
+      console.log('obj in if:', searchObj);
+    }
+
+   database.ref().child(loc).set(searchObj)
+
+  })
+
+  /*--------------------------------------------------------------------------------------*/
+  
+  
   // Call refresh function passing latitude and longitude values
   refreshData(lat, lng);
 });
@@ -246,17 +302,23 @@ let twitterAjax = function () {
     "cache-control": "no-cache"
     }
   };
+
 //  console.log(settings.url);
   // Ajax Call
   $.ajax(settings).done(function (response) {
 //    console.log(response);    
+
     // For loop that will create the tweets according to the number of tweets returned from the API
     for (var i = 0; i < response.statuses.length; i++) {
       // Create tweet blocks dynamically. Each tweet is given an ID of "tweet-widget-i" where i is the number.
       twttr.widgets.createTweet(response.statuses[i].id_str, document.getElementById("twitter"), {
-        cards: "hidden"
+        cards: "hidden",
+        linkColor: "#fb7064",
+        size: "small",
+        conversation: "none"
       });
     }
+
   });
 };
 
