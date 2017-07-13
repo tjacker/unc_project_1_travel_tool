@@ -9,6 +9,8 @@
 //   3. Map
 //   4. Weather
 //   5. Food
+//   6. Events
+//   7. Footer
 
 // 0. Mixins
 // ----------------
@@ -24,6 +26,7 @@
 @mixin links {
   .more-info {
     text-align: right;
+    margin: 0;
     a {
       background-color: inherit;
       img {
@@ -70,6 +73,9 @@ a {
 .top-bar {
   @include breakpoint(medium down) {
     flex-direction: column;
+  }
+  @include breakpoint(large) {
+    padding: 1rem 2rem;
   }
   .top-bar-left {
     @include breakpoint(medium down) {
@@ -120,6 +126,13 @@ a {
     line-height: 1.1;
   }
   @include titles
+  .accordion-content,
+  .tabs-panel {
+    padding-bottom: 1.5rem;
+    @include breakpoint(large) {
+      padding: 0.5rem 2rem 2rem;
+    }
+  }
   .flex-container {
     flex-wrap: wrap;
     justify-content: space-between;
@@ -163,9 +176,6 @@ a {
   }
   @include active;
   @include links;
-  .more-info {
-    margin: 0.25rem 0;
-  }
 }
 
 // 5. Food
@@ -177,9 +187,15 @@ a {
   .tabs-panel {
     padding-top: 1rem;
     overflow-x: scroll;
+    @include breakpoint(large) {
+      padding: 2rem;
+    }
   }
   .food-container {
     padding-right: 1rem;
+    @include breakpoint(large) {
+      padding-right: 2rem;
+    }
     p {
       line-height: 1;
       margin-bottom: 0.5rem;
@@ -241,4 +257,30 @@ a {
   }
   @include active;
   @include links;
+}
+
+// 6. Events
+// ----------------
+
+
+
+// 7. Footer
+// ----------------
+
+footer {
+  background-color: $topbar-blue;
+  color: $white;
+  padding: 2rem;
+  @include breakpoint(large) {
+    padding: 2rem 3rem;
+  }
+  .columns {
+    padding: 0;
+  }
+  .medium-6 {
+    margin-bottom: 2rem;
+  }
+  a {
+    display: block;
+  }
 }
