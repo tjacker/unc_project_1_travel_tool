@@ -65,14 +65,18 @@
 // 1. Global
 // ---------
 
-$global-font-size: 100%;
-$global-width: rem-calc(1200);
-$global-lineheight: 1.5;
-// Custom Color Variables
+// Custom Variables
+// General
+
+// Colors
 $topbar-blue: #133c55;
 $icon-color: rgba($topbar-blue, 0.85);
 $highlight-color: #f6f6e8;
 // ----------------------
+
+$global-font-size: 100%;
+$global-width: rem-calc(1200);
+$global-lineheight: 1.5;
 $foundation-palette: (
   primary: #fb7064, // #1779ba
   secondary: #767676,

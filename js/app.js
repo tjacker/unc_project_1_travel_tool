@@ -29,15 +29,33 @@ const $locDetails = $('#location-details');
 const $map = $('#map');
 const $weather = $('#weather');
 const $food= $('#food');
+const $event= $('#event');
 const $twitter= $('#twitter');
+// Variable to hold responsive accordion and tabs container
+const ul = '<ul class="accordion" data-allow-all-closed="true" data-responsive-accordion-tabs="accordion large-tabs"></ul>';
 
 // Variables to hold location data elements and value
 const $geoLat = $('[data-geo="lat"]');
 const $geoLng = $('[data-geo="lng"]');
 const $geoLoc = $('[data-geo="locality"]');
+const $geoSubLoc = $('[data-geo="sublocality"]');
 let lat = '';
 let lng = '';
 let loc = '';
+
+// More info icon location
+const imgInfo = 'img/info.svg';
+
+let searchDist = 50; // Search Distance in miles
+
+// Track event categories returned by AJAX and store event HTML
+let categoryCount = 0;
+let NumCategories = 4;
+// Define as an empty template literals. Defined as var to work with the window object
+var concerts = ``;
+var theater = ``;
+var outdoors = ``;
+var sports = ``;
 
 // Call Geocomplete plugin to create autocomplete field and interactive map
 $searchFld.geocomplete({
@@ -57,7 +75,14 @@ $searchFld.geocomplete({
   lng = $geoLng.text();
   loc = $geoLoc.text().trim();
 
-  // Additions within this zone for next merge
+  
+  // If locality returns empty, use sub locality
+  if ($geoLoc.text()) {
+    loc = $geoLoc.text().trim(); 
+  } else {
+    loc = $geoSubLoc.text().trim();
+  }
+  // This zone pushes information to firebase
   /*--------------------------------------------------------------------------------------*/
   // Setting data in firebase
   
@@ -87,9 +112,8 @@ $searchFld.geocomplete({
   })
 
   /*--------------------------------------------------------------------------------------*/
-
-
-
+  
+  
   // Call refresh function passing latitude and longitude values
   refreshData(lat, lng);
 });
@@ -102,24 +126,20 @@ $clearBtn.click(function () {
 
 // Function to refresh location data based on new search term
 let refreshData = function (lat, lng) {
-  // Remove all children and bound events from weather container
+  // Remove all children and bound events from containers
   $weather.children().remove();
-  // Call function to run AJAX requests for weather
-  weatherAjax(lat, lng);
-  // Remove all children and bound events from food container
   $food.children().remove();
-  // Call function to run AJAX requests for weather
-  foodAjax(lat, lng);
-  // Remove all children and bound events from twitter container
+  $event.children().remove();
   $twitter.children().remove();
-  // Call function to run AJAX requests for weather
-  twitterAjax(loc);
+  // Call functions to run AJAX requests
+  weatherAjax();
+  foodAjax();
+  eventAjax();
+  twitterAjax();
 };
 
 // Function to hold weather AJAX requests
 let weatherAjax = function () {
-  // Variable to hold responsive accordion and tabs container
-  let ul = '<ul class="accordion" data-allow-all-closed="true" data-responsive-accordion-tabs="accordion large-tabs"></ul>';
   // Append ul and create variable to hold new element
   $weather.append(ul);
   let $weatherUl = $('#weather ul');
@@ -140,8 +160,8 @@ let weatherAjax = function () {
     method: 'GET'
   }).done(function (weather) {
     // Call function to populate current weather and append
-    $weatherUl.append(weatherHtml(weather));
     console.log(weather);
+    $weatherUl.append(weatherHtml(weather));
     // Nested AJAX call for location's 7-day forecast
     $.ajax({
       url: urlForecast + param,
@@ -151,13 +171,15 @@ let weatherAjax = function () {
       $weatherUl.append(forecastHtml(forecast));
       // Initialize foundation plugin on accordion
       $weatherUl.foundation();
-      console.log(forecast);
     });
   });
 };
 
 // Function to hold food AJAX request
 let foodAjax = function () {
+  // Append ul and create variable to hold new element
+  $food.append(ul);
+  let $foodUl = $('#food ul');
   // Store Zomato API key and URLs
   let apiKey = '2a5e7c3416abfd7e68eb4e7d9cdac4b9';
   let urlLocate = 'https://developers.zomato.com/api/v2.1/locations?';
@@ -189,16 +211,82 @@ let foodAjax = function () {
       },
       url: urlDetail + locDetail
     }).done(function (places) {
-      console.log(places);
+      // Call function to populate best restaurants and append
+      $foodUl.append(foodHtml(places));
+      $foodUl.foundation();
     });
   });
+};
+
+// Function to hold event AJAX requests
+let eventAjax = function () {
+  // Append ul and create variable to hold new element
+  $event.append(ul);
+  let $eventUl = $('#event ul');
+  // Store Evenful API key and URLs
+  let searchTerm = '';
+  let apiKey = 'sG6J5BXGggtDB32n';
+  let url = 'https://api.eventful.com/json/events/search?';
+  // Set location and search parameters for AJAX call
+  let param = $.param({
+    where: `${lat},${lng}`,
+    within: searchDist,
+    date: 'Future',
+    app_key: apiKey
+  });
+  
+  // Function to call AJAX request with search parameter and category
+  let request = function (search, catgory) {
+    searchTerm = `&keywords=${search}&`;
+    $.ajax({
+      url: url + searchTerm + param,
+      method: "GET",
+      dataType: "jsonp",
+      crossDomain: true,
+      headers: {
+      "Access-Control-Allow-Origin": "*"
+      }
+    }).done(function (data) {
+      if(!data.events) {
+        // Handle empty response
+        categoryCount++;
+        console.log(catgory, ": No events");
+      } else if(data.error) {
+        // Handle error
+        console.log(catgory, ": Error");
+      } else {
+        // Track the number of eventful objects returned
+        categoryCount++;
+        // Call function to populate event variables
+        eventHtml(data.events, catgory);
+      }
+      // If category count equals total number of categories, append data
+      if (categoryCount === NumCategories) {
+        $eventUl.append(concerts, theater, outdoors, sports);
+        // Assign is active class to first event section before binding foundation events
+        $eventUl.children().first().addClass('is-active');
+        $eventUl.foundation();
+        // Reset category counter and variables
+        categoryCount = 0;
+        concerts = ``;
+        theater = ``;
+        outdoors = ``;
+        sports = ``;
+      }
+    });
+  };
+
+  request('concerts', 'concerts');
+  request('theatrical+performance', 'theater');
+  request('outdoors', 'outdoors');
+  request('sports', 'sports');
 };
 
 // Function to hold food AJAX request
 let twitterAjax = function () {
   // Variables for AJAX call
   var query = `%23${cleanString(loc)}`; // %23 hashtag code. Call function to remove spaces and punctuation from locality
-  var radius = '50mi';
+  var radius = `${searchDist}mi`;
   var geoCode = `&geocode=${lat},${lng},${radius}`;
   var tweets = 10;
   var count = `&count=${tweets}`;
@@ -214,12 +302,12 @@ let twitterAjax = function () {
     "cache-control": "no-cache"
     }
   };
-  console.log(settings.url); 
 
+//  console.log(settings.url);
   // Ajax Call
   $.ajax(settings).done(function (response) {
-    console.log(response);    
-        
+//    console.log(response);    
+
     // For loop that will create the tweets according to the number of tweets returned from the API
     for (var i = 0; i < response.statuses.length; i++) {
       // Create tweet blocks dynamically. Each tweet is given an ID of "tweet-widget-i" where i is the number.
@@ -236,7 +324,6 @@ let twitterAjax = function () {
 
 // Function to create and return the HTML for current weather information
 let weatherHtml = function (data) {
-  let id = data.id;
   let desc = capitalize(data.weather[0].description);
   let dir = cardinalDir(data.wind.deg);
   let wind = Math.round(data.wind.speed);
@@ -245,7 +332,7 @@ let weatherHtml = function (data) {
     `<li class="accordion-item is-active" data-accordion-item>
       <a href="#" class="accordion-title">Current Weather</a>
       <div class="accordion-content" data-tab-content>
-        <div class="more-info"><a  href="https://openweathermap.org/city/${id}" target="_blank">More Info</a></div>
+        <div class="more-info"><a  href="https://openweathermap.org/city/${data.id}" target="_blank"><img src="${imgInfo}" alt=""></a></div>
         <div class="flex-container">
           <i class="owf owf owf-${data.weather[0].id}"></i>
           <div class="place">
@@ -256,9 +343,12 @@ let weatherHtml = function (data) {
             <p>Wind ${dir}</p>
             <p>${wind} mph</p>
           </div>
+          <div class="humid show-for-large">
+            <p>Humidity</p>
+            <p>${data.main.humidity}%</p>
+          </div>
           <div class="temp">
             <p>${temp}&deg;</p>
-            <p>Hum. ${data.main.humidity}%</p>
           </div>
         </div>
       </div>
@@ -279,12 +369,12 @@ let forecastHtml = function (data) {
     let show = '';
     // Classes to show forecast days 6 and 7 based on screen width
     if (i === 5) {
-      show = 'show-for-medium ';
+      show = 'show-for-medium';
     } else if (i === 6) {
-      show = 'show-for-large ';
+      show = 'show-for-large';
     }
     days +=
-      `<div class="${show}forecast flex-container">
+      `<div class="${show} forecast flex-container">
         <p><strong>${date}</strong></p>
         <i class="owf owf owf-${icon}"></i>
         <p><strong>${high}&deg;</strong> ${low}&deg;</p>
@@ -294,7 +384,7 @@ let forecastHtml = function (data) {
     `<li class="accordion-item" data-accordion-item>
       <a href="#" class="accordion-title">Daily Forecast</a>
       <div class="accordion-content" data-tab-content>
-        <div class="more-info"><a  href="https://openweathermap.org/city/${id}" target="_blank">More Info</a></div>
+        <div class="more-info"><a  href="https://openweathermap.org/city/${id}" target="_blank"><img src="${imgInfo}" alt=""></a></div>
         <div class="flex-container">
          ${days}
         </div>
@@ -304,19 +394,89 @@ let forecastHtml = function (data) {
 };
 
 // Function to create and return the HTML for best rated restaurants
-let restaurantsHtml = function (data) {
+let foodHtml = function (data) {
   let places = ``; // Define as an empty template literal
+  let img = '';
   // Build restaurant detail section
-  $.each(places.best_rated_restaurant, function(i, place) {
-    let img = place.restaurant.featured_image;
+  $.each(data.best_rated_restaurant, function(i, place) {
+    // If image field is blank than select random stock image
+    if (place.restaurant.featured_image) {
+      img = place.restaurant.featured_image;
+    } else {
+      let randomImg = randomNumber(50);
+      img = `img/stock/${randomImg}-rest.jpg`;
+    }
     let name = place.restaurant.name;
     let loc = place.restaurant.location.locality;
     let type = place.restaurant.cuisines;
+    let url = place.restaurant.url;
     let rating = place.restaurant.user_rating.aggregate_rating;
+    let ratingColor = place.restaurant.user_rating.rating_color;
     let votes = place.restaurant.user_rating.votes;
-    
-    
+    places +=
+      `<div class="food-container">
+        <div class="flex-container">
+          <div class="img-container">
+            <img src="${img}" alt="">
+            <p class="rest-type">${type}</p>
+          </div>
+          <div class="rating-container flex-container">
+            <p class="rest-rating" style="background-color: #${ratingColor}"><strong>${rating} <span>&frasl; 5</span></strong></p>
+            <p class="rest-votes">${votes} votes</p>
+          </div>
+        </div>
+        <div class="name-container flex-container">
+          <div>
+            <p class="rest-name"><strong>${name}</strong></p>
+            <p class="rest-location">${loc}</p>
+          </div>
+          <div>
+            <p class="more-info"><a href="${url}" target="_blank"><img src="${imgInfo}" alt=""></a></p>
+          </div>
+        </div>
+      </div>`;
   });
+  let html =
+    `<li class="accordion-item is-active" data-accordion-item>
+      <a href="#" class="accordion-title">Best Restaurants</a>
+      <div class="accordion-content" data-tab-content>
+        <div class="flex-container">
+         ${places}
+        </div>
+      </div>
+    </li>`;
+  return html;
+};
+
+// Function to create and return the HTML for local events
+let eventHtml = function (data, category) {
+  console.log(category, data);
+  let events = ``; // Define as an empty template literal
+  let img = '';
+  let capCategory;
+  // Build event detail sections
+  $.each(data.event, function(i, e) {
+    // Call function to capitalize category for section title
+    capCategory = capitalize(category);
+    events +=
+      `<div class="flex-container">
+        <p>${e.title}</p>
+        <p>${e.city_name}, <span>${e.region_abbr}</span></p>
+        <p>${e.start_time}</p>
+        <p class="more-info"><a href="${e.url}" target="_blank"><img src="img/info.svg" alt=""></a></p>
+      </div>`;
+  });
+  
+  window[category] =
+    `<li class="accordion-item" data-accordion-item>
+      <a href="#" class="accordion-title">${capCategory}</a>
+      <div class="accordion-content" data-tab-content>
+        <div class="flex-container">
+         ${events}
+        </div>
+      </div>
+    </li>`;
+  return window[category];
 };
 
 // Function to capitalize first letter of a string
@@ -369,126 +529,12 @@ let formatDay = function (time) {
   return moment.unix(time).format('ddd');
 };
 
-
-// Begin API call for Eventful to list events in local area
-
-
-// function that runs ajax call for event database
-function concert_events() {
-
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "concert" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
-  $.ajax({
-    url: queryURL,
-    method: "GET",
-    dataType: "jsonp",
-    crossDomain: true,
-    headers: {
-    "Access-Control-Allow-Origin": "*"
-   }
-  }).done(function(response) {
-    console.log(response);
-
-    // call only shows top ten events returned for each category
-    for(var i = 0; i < 10; i++) {
-
-    // constructing HTML containing event information
-    var concertName = $("<ul>").text(response.events.event[i].title);
-    var concertURL = $("<a>").attr("href", response.events.event[i].url).append(concertName);
-
-     $("#events-concert").append(concertURL);
-
-  }
-  });
-}
-
-function theater_events() {
-
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "theatrical+performance" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
-  $.ajax({
-    url: queryURL,
-    method: "GET",
-    dataType: "jsonp",
-    crossDomain: true,
-    headers: {
-    "Access-Control-Allow-Origin": "*"
-   }
-  }).done(function(response) {
-    console.log(response);
-
-    // call only shows top ten events returned for each category
-    for(var i = 0; i < 10; i++) {
-
-    // constructing HTML containing event information
-    var eventName = $("<ul>").text(response.events.event[i].title);
-    var eventURL = $("<a>").attr("href", response.events.event[i].url).append(eventName);
-
-     $("#events-theater").append(eventURL);
-
-  }
-  });
-}
-
-function outdoor_events() {
-
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "outdoors" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
-  $.ajax({
-    url: queryURL,
-    method: "GET",
-    dataType: "jsonp",
-    crossDomain: true,
-    headers: {
-    "Access-Control-Allow-Origin": "*"
-   }
-  }).done(function(response) {
-    console.log(response);
-
-    // call only shows top ten events returned for each category
-    for(var i = 0; i < 10; i++) {
-
-    // constructing HTML containing event information
-    var eventName = $("<ul>").text(response.events.event[i].title);
-    var eventURL = $("<a>").attr("href", response.events.event[i].url).append(eventName);
-
-     $("#events-outdoors").append(eventURL);
-
-  }
-  });
-}
-
-function show_events() {
-
-  var queryURL = "http://api.eventful.com/json/events/search?...&keywords=" + "sports" + "&location=" + "San+Diego" + "&date=Future&app_key=sG6J5BXGggtDB32n"
-  $.ajax({
-    url: queryURL,
-    method: "GET",
-    dataType: "jsonp",
-    crossDomain: true,
-    headers: {
-    "Access-Control-Allow-Origin": "*"
-   }
-  }).done(function(response) {
-    console.log(response);
-
-    // call only shows top ten events returned for each category
-    for(var i = 0; i < 10; i++) {
-
-    // constructing HTML containing event information
-    var eventName = $("<ul>").text(response.events.event[i].title);
-    var eventURL = $("<a>").attr("href", response.events.event[i].url).append(eventName);
-
-     $("#events-sports").append(eventURL);
-
-  }
-  });
-}
-
-concert_events();
-theater_events();
-outdoor_events();
-show_events();
-
 let cleanString = function (string) {
   return string.replace(/[^A-Za-z0-9_]/g,"");
+};
+
+let randomNumber = function (number) {
+  return Math.floor(Math.random() * number) + 1;
 };
 
 

@@ -8,11 +8,47 @@
 //   2. Search Menu
 //   3. Map
 //   4. Weather
+//   5. Food
+//   6. Events
+//   7. Footer
 
 // 0. Mixins
 // ----------------
 
+@mixin titles {
+  .accordion-title,
+  .tabs-title {
+    font-weight: 600;
+    transition: background-color 0.25s ease-out;
+  }
+}
 
+@mixin links {
+  .more-info {
+    text-align: right;
+    margin: 0;
+    a {
+      background-color: inherit;
+      img {
+        min-width: 18px; // Keeps long restaurant names from causing icon to scrink
+        opacity: 0.85;
+        transition: transform 0.25s ease-out;
+        &:hover {
+          transform: scale(1.15) translateY(-3px);
+        }
+      }
+    }
+  }
+}
+
+@mixin active {
+  .is-active {
+    a {
+      color: $white;
+      background-color: $primary-color;
+    }
+  }
+}
 
 // 1. Base Elements
 // ----------------
@@ -27,12 +63,19 @@ main {
   flex-grow: 1;
 }
 
+a {
+  outline: none;
+}
+
 // 2. Search Menu
 // ----------------
 
 .top-bar {
   @include breakpoint(medium down) {
     flex-direction: column;
+  }
+  @include breakpoint(large) {
+    padding: 1rem 2rem;
   }
   .top-bar-left {
     @include breakpoint(medium down) {
@@ -79,16 +122,18 @@ main {
 // ----------------
 
 #weather {
+  @include titles;
+  @include active;
+  @include links;
   p {
     line-height: 1.1;
   }
-  a {
-    outline: none;
-  }
-  .accordion-title,
-  .tabs-title {
-    font-weight: 600;
-    transition: background-color 0.25s ease-out;
+  .accordion-content,
+  .tabs-panel {
+    padding-bottom: 1.5rem;
+    @include breakpoint(large) {
+      padding: 0.5rem 2rem 2rem;
+    }
   }
   .flex-container {
     flex-wrap: wrap;
@@ -111,6 +156,11 @@ main {
         font-weight: 600;
       }
     }
+    .temp {
+      p:first-of-type {
+        font-size: 1.75rem;
+      }
+    }
   }
   .forecast {
     flex-direction: column;
@@ -122,28 +172,128 @@ main {
       font-size: 3rem;
     }
   }
-  .is-active {
-    a {
-      color: $white;
-      background-color: $primary-color;
-    }
-  }
   .owf {
     font-size: 3.5rem;
     color: $icon-color;
   }
-  .more-info {
-    text-align: right;
-    margin-bottom: 0.25rem;
-    a {
-      font-weight: 600;
-      color: $primary-color;
-      background-color: inherit;
-      &:hover {
-        text-decoration: underline;
+  
+}
+
+// 5. Food
+// ----------------
+
+#food {
+  @include titles;
+  @include active;
+  @include links;
+  .accordion-content,
+  .tabs-panel {
+    padding-top: 1rem;
+    overflow-x: scroll;
+    @include breakpoint(large) {
+      padding: 2rem;
+    }
+  }
+  .food-container {
+    padding-right: 1rem;
+    @include breakpoint(large) {
+      padding-right: 2rem;
+    }
+    p {
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+  }
+  .img-container {
+    position: relative;
+    width: 250px;
+    height: auto;
+    overflow: hidden;
+    background: url(../img/restaurant.png) no-repeat center center;
+    background-size: cover;
+    .rest-type {
+      position: absolute;
+      font-size: 0.9375rem;
+      color: $white;
+      background-color: rgba($black, 0.8);
+      bottom: 0;
+      right: 0;
+      padding: 0.25rem 0.5rem;
+      margin-bottom: 0;
+    }
+  }
+  .rating-container {
+    flex-direction: column;
+    margin-left: 0.5rem;
+    @include breakpoint(small only) {
+      margin-left: 0.25rem;
+    }
+    align-items: flex-end;
+    .rest-rating {
+//      width: 60px;
+      font-size: 1.2rem;
+      color: $white;
+      padding: 0.25rem 0.5rem;
+      @include breakpoint(small only) {
+        padding: 0.25rem;
       }
+      span {
+        font-size: 1rem;
+        color: $light-gray;
+      }
+    }
+    .rest-votes {
+      text-align: right;
+      font-weight: 600;
+      @include breakpoint(medium) {
+        width: 75px; // Prevent line from wrapping
+      }
+    }
+  }
+  .name-container {
+//    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    .rest-name {
+      font-size: 1.25rem;
+      margin-top: 0.5rem;
+    }
+    .rest-location {
+      font-size: 1.125rem;
     }
   }
 }
 
+// 6. Events
+// ----------------
+
+#event {
+  @include titles;
+  @include active;
+  @include links;
+}
+
+
+
+
+// 7. Footer
+// ----------------
+
+footer {
+  background-color: $topbar-blue;
+  color: $white;
+  padding: 2rem;
+  @include breakpoint(large) {
+    padding: 2rem 3rem;
+  }
+  .columns {
+    padding: 0;
+  }
+  .medium-6 {
+    margin-bottom: 2rem;
+  }
+  a {
+    display: block;
+  }
+}
 
