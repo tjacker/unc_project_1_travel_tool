@@ -298,9 +298,16 @@ let forecastHtml = function (data) {
 // Function to create and return the HTML for best rated restaurants
 let restaurantsHtml = function (data) {
   let places = ``; // Define as an empty template literal
+  let img = '';
   // Build restaurant detail section
   $.each(data.best_rated_restaurant, function(i, place) {
-    let img = place.restaurant.featured_image;
+    // If image field is blank than select random stock image
+    if (place.restaurant.featured_image) {
+      img = place.restaurant.featured_image;
+    } else {
+      let randomImg = randomNumber(50);
+      img = `img/stock/${randomImg}-rest.jpg`;
+    }
     let name = place.restaurant.name;
     let loc = place.restaurant.location.locality;
     let type = place.restaurant.cuisines;
@@ -424,6 +431,10 @@ function show_events() {
 
 let cleanString = function (string) {
   return string.replace(/[^A-Za-z0-9_]/g,"");
+};
+
+let randomNumber = function (number) {
+  return Math.floor(Math.random() * number) + 1;
 };
 
 
