@@ -228,7 +228,6 @@ let twitterAjax = function () {
 
 // Function to create and return the HTML for current weather information
 let weatherHtml = function (data) {
-  let id = data.id;
   let desc = capitalize(data.weather[0].description);
   let dir = cardinalDir(data.wind.deg);
   let wind = Math.round(data.wind.speed);
@@ -237,7 +236,7 @@ let weatherHtml = function (data) {
     `<li class="accordion-item is-active" data-accordion-item>
       <a href="#" class="accordion-title">Current Weather</a>
       <div class="accordion-content" data-tab-content>
-        <div class="more-info"><a  href="https://openweathermap.org/city/${id}" target="_blank"><img src="${imgInfo}" alt=""></a></div>
+        <div class="more-info"><a  href="https://openweathermap.org/city/${data.id}" target="_blank"><img src="${imgInfo}" alt=""></a></div>
         <div class="flex-container">
           <i class="owf owf owf-${data.weather[0].id}"></i>
           <div class="place">
@@ -248,9 +247,12 @@ let weatherHtml = function (data) {
             <p>Wind ${dir}</p>
             <p>${wind} mph</p>
           </div>
+          <div class="humid show-for-large">
+            <p>Humidity</p>
+            <p>${data.main.humidity}%</p>
+          </div>
           <div class="temp">
             <p>${temp}&deg;</p>
-            <p>Hum. ${data.main.humidity}%</p>
           </div>
         </div>
       </div>

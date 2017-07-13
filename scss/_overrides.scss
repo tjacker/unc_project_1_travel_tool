@@ -31,7 +31,7 @@
         opacity: 0.85;
         transition: transform 0.25s ease-out;
         &:hover {
-          transform: scale(1.2) translateY(-4px);
+          transform: scale(1.15) translateY(-3px);
         }
       }
     }
@@ -141,6 +141,11 @@ a {
         font-weight: 600;
       }
     }
+    .temp {
+      p:first-of-type {
+        font-size: 1.75rem;
+      }
+    }
   }
   .forecast {
     flex-direction: column;
@@ -158,6 +163,9 @@ a {
   }
   @include active;
   @include links;
+  .more-info {
+    margin: 0.25rem 0;
+  }
 }
 
 // 5. Food
