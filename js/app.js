@@ -56,13 +56,18 @@ $.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", metho
     })
   });
 
-/*-------------------------------------------------------------------------------*/
+// Adds a footer to the word cloud
+var wordFooter = $("<h5 id='word-footer'>");
+wordFooter.text("Global Searches")
+wordFooter.appendTo($("#wordcloud"))
 
+
+// Displays the wordcloud by calling this function on the word_list div
 $(document).ready(function() {
    $("#wordcloud").jQCloud(word_list);
 });
 
-/*-------------------------------------------------------------------------------*/
+
 
 
 // Variables to hold DOM elements
@@ -119,8 +124,8 @@ $searchFld.geocomplete({
   loc = $geoLoc.text().trim();
 
   
-  // Removes Global Searches
-  $("#common-searches").remove();
+  // Removes WordCloud
+  $("#wordcloud").remove();
 
   // If locality returns empty, use sub locality
   if ($geoLoc.text()) {
