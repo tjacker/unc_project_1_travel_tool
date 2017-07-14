@@ -305,7 +305,7 @@ let eventAjax = function () {
 let twitterAjax = function () {
   // Append ul and create variable to hold new element
   $twitter.append(ul);
-  var $twitterUl = $('#twitter ul');
+  let $twitterUl = $('#twitter ul');
   // Variables for AJAX call
   var query = `%23${cleanString(loc)}`; // %23 hashtag code. Call function to remove spaces and punctuation from locality
   var radius = `${searchDist}mi`;
@@ -326,32 +326,31 @@ let twitterAjax = function () {
     }
   };
   
-  $twitterUl.html(
+  $twitterUl.append(
     `<li class="accordion-item is-active" data-accordion-item>
       <a href="#" class="accordion-title">Recent Tweets</a>
       <div class="accordion-content" data-tab-content>
-        <div class="flex-container" id="tweets">
+        <div id="tweets" class="flex-container">
         </div>
       </div>
-    <li>`
+    </li>`
   );
 
-//  console.log(settings.url);
   // Ajax Call
-  $.ajax(settings).done(function (response) {
-//    console.log(response);    
+  $.ajax(settings).done(function (response) {   
     // For loop that will create the tweets according to the number of tweets returned from the API
     for (var i = 0; i < response.statuses.length; i++) {
       // Create tweet blocks dynamically. Each tweet is given an ID of "tweet-widget-i" where i is the number.
       twttr.widgets.createTweet(response.statuses[i].id_str, document.getElementById("tweets"), {
         cards: "hidden",
         linkColor: "#fb7064",
-        size: "small",
+        size: "medium",
         conversation: "none"
       });
-    $twitterUl.foundation();
     }
+    $twitterUl.foundation();
   });
+  $twitterUl.foundation();
 };
 
 // Function to create and return the HTML for current weather information

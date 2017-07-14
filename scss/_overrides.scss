@@ -10,7 +10,9 @@
 //   4. Weather
 //   5. Food
 //   6. Events
-//   7. Footer
+//   7. Twitter
+//   8. Footer
+//   9. Common Search
 
 // 0. Mixins
 // ----------------
@@ -305,7 +307,23 @@ a {
   }
 }
 
-// 7. Footer
+// 7. Twitter
+// ----------------
+
+#twitter {
+  @include titles;
+  @include active;
+  @include links;
+  .accordion-content,
+  .tabs-panel {
+    overflow-x: scroll;
+    @include breakpoint(large) {
+      padding: 2rem;
+    }
+  }
+}
+
+// 8. Footer
 // ----------------
 
 footer {
@@ -326,19 +344,27 @@ footer {
   }
 }
 
-// 8. Twitter
+// 8. Common Search
 // ----------------
 
-#twitter {
-  @include titles;
-  @include active;
-  @include links;
-  .accordion-content,
-  .tabs-panel {
-    overflow-x: scroll;
-    @include breakpoint(large) {
-      padding: 2rem;
-    }
+#common-searches {
+  position: absolute;
+  z-index: 25;
+  top: 40%;
+  left: 50%;
+  text-align: center;
+  box-shadow: 5px 5px 5px grey;
+  width: 500px;
+  transform: translate(-50%, -50%);
+  #search-header {
+    background-color: #133c55;
+    color: #fdfdfa;
+    text-align: center;
+  }
+  .search-term {
+    color: #fb7064;
+    z-index: 26;
   }
 }
+
 
