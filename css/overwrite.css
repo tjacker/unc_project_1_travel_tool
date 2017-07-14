@@ -1,6 +1,28 @@
 #twitter {
-  overflow: auto;
-  white-space: nowrap;
-  height: 300px;
-  padding: 16px;
+  overflow: auto !important;
+  white-space: nowrap !important;
+  height: 300px !important;
+  padding: 16px !important;
+}
+
+#common-searches {
+  position: absolute;
+  z-index: 25;
+  top: 40%;
+  left: 50%;
+  text-align: center;
+  box-shadow: 5px 5px 5px grey;
+  width: 500px;
+  transform: translate(-50%, -50%);
+}
+
+#search-header {
+  background-color: #133c55;
+  color: #fdfdfa;
+  text-align: center;
+}
+
+.search-term {
+  color: #fb7064;
+  z-index: 26;
 }

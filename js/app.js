@@ -15,10 +15,27 @@ firebase.initializeApp(config);
 // Database variable
 const database = firebase.database();
 
+database.ref().on("value", function(snapshot) {
+  var searchTerm = snapshot.val()
+  console.log(searchTerm)
+})
+
 // Pull data from Firebase
 $.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", method: "get"
   }).done(function(response) {
+    console.log(response)
     console.log(Object.keys(response))
+    var objRef = Object.keys(response)
+    var counters = response
+    objRef.map( key => Object.assign({key}, counters[key]) ).sort((a, b) => b.counter - a.counter )
+    .every( (counter, rank) => {
+      var p = $("<p>")
+      p.addClass("search-term menu-text")
+      p.text(counter.location)
+      $("#common-searches").append(p)
+      return rank < 4;
+    })
+    
   })
 
 
@@ -76,6 +93,9 @@ $searchFld.geocomplete({
   loc = $geoLoc.text().trim();
 
   
+  // Removes Global Searches
+  $("#common-searches").remove();
+
   // If locality returns empty, use sub locality
   if ($geoLoc.text()) {
     loc = $geoLoc.text().trim(); 
@@ -290,12 +310,13 @@ let twitterAjax = function () {
   var geoCode = `&geocode=${lat},${lng},${radius}`;
   var tweets = 10;
   var count = `&count=${tweets}`;
+  var resultType = `&result_type=mixed`
 
   // Further AJAX settings
   var settings = {
   "async": true,
   "crossDomain": true,
-  "url": "https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/search/tweets.json?q=" + query + geoCode + count,
+  "url": "https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/search/tweets.json?q=" + query + geoCode + count + resultType,
   "method": "GET",
   "headers": {
     "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANm41QAAAAAAymaZJR9slBVrP0CVnuDkNU1O2Wo%3D3mjc2Z1ym6zMyCWTY7uDiDIn7GivakZg7iGMlt70hZFQhzorUE",
@@ -303,11 +324,23 @@ let twitterAjax = function () {
     }
   };
 
+    /*$twitter.append(ul)
+    $twitterUl = $("#twitter ul")
+    
+    $twitterUl.html(
+      `<li class="accordion-item" data-accordion-item>
+        <a href="#" class="accordion-title">Recent Tweets</a>
+          <div class="accordion-content" data-tab-content>
+          <div class="flex-container" id="tweets">
+        </div>
+      </div>
+    <li>`
+    )
+    */
 //  console.log(settings.url);
   // Ajax Call
   $.ajax(settings).done(function (response) {
 //    console.log(response);    
-
     // For loop that will create the tweets according to the number of tweets returned from the API
     for (var i = 0; i < response.statuses.length; i++) {
       // Create tweet blocks dynamically. Each tweet is given an ID of "tweet-widget-i" where i is the number.
@@ -318,6 +351,10 @@ let twitterAjax = function () {
         conversation: "none"
       });
     }
+
+
+    ;
+
 
   });
 };
