@@ -337,7 +337,8 @@ let twitterAjax = function () {
   );
 
   // Ajax Call
-  $.ajax(settings).done(function (response) {   
+  $.ajax(settings).done(function (response) {
+    console.log(response);
     // For loop that will create the tweets according to the number of tweets returned from the API
     for (var i = 0; i < response.statuses.length; i++) {
       // Create tweet blocks dynamically. Each tweet is given an ID of "tweet-widget-i" where i is the number.
@@ -350,7 +351,6 @@ let twitterAjax = function () {
     }
     $twitterUl.foundation();
   });
-  $twitterUl.foundation();
 };
 
 // Function to create and return the HTML for current weather information
