@@ -15,10 +15,6 @@ firebase.initializeApp(config);
 // Database variable
 const database = firebase.database();
 
-database.ref().on("value", function(snapshot) {
-  var searchTerm = snapshot.val()
-  console.log(searchTerm)
-})
 
 // Pull data from Firebase
 $.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", method: "get"
@@ -328,13 +324,13 @@ let twitterAjax = function () {
     $twitterUl = $("#twitter ul")
     
     $twitterUl.html(
-      `<li class="accordion-item" data-accordion-item>
+      `<li class="accordion-item is-active" data-accordion-item>
         <a href="#" class="accordion-title">Recent Tweets</a>
-          <div class="accordion-content" data-tab-content>
+        <div class="accordion-content" data-tab-content>
           <div class="flex-container" id="tweets">
           </div>
         </div>
-      <li>`
+      </li>`
     );
     $twitterUl.foundation();
     
@@ -351,12 +347,7 @@ let twitterAjax = function () {
         size: "small",
         conversation: "none"
       });
-    }
-
-
-    ;
-
-
+    };
   });
 };
 
@@ -577,8 +568,8 @@ let randomNumber = function (number) {
 
 // News API
 
-function getArticles() {
-    var location = "chicago";
+function newsAjax() {
+    var location = 'chicago';
     var queryURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=b374b0d5d62040c9a7db208eba9a3654&q=" + location + "&begin_date=20170701";
 
     $.ajax({

@@ -297,3 +297,20 @@ footer {
   }
 }
 
+// 8. Twitter
+// ----------------
+
+
+#twitter {
+  @include titles;
+  @include active;
+  @include links;
+  .accordion-content,
+  .tabs-panel {
+    overflow-x: scroll;
+    @include breakpoint(large) {
+      padding: 2rem;
+    }
+  }
+}
+
