@@ -345,7 +345,6 @@ let twitterAjax = function () {
       twttr.widgets.createTweet(response.statuses[i].id_str, document.getElementById("tweets"), {
         cards: "hidden",
         linkColor: "#fb7064",
-        size: "medium",
         conversation: "none"
       });
     }

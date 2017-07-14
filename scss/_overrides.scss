@@ -285,7 +285,7 @@ a {
     }
   }
   .event-container {
-    min-width: 307px; // Quick fix to match food-container width at 320px view
+    min-width: 291px; // Quick fix to match food-container width at 320px view
     flex-direction: column;
     align-content: space-between;
     margin-right: 1rem;
@@ -322,10 +322,24 @@ a {
   @include links;
   .accordion-content,
   .tabs-panel {
+    padding-top: 1rem;
     overflow-x: scroll;
     @include breakpoint(large) {
       padding: 2rem;
     }
+  }
+}
+
+twitterwidget {
+  min-width: 320px - 32px !important;
+  max-width: 320px - 32px !important;
+  margin-right: 1rem;
+  @include breakpoint(medium) {
+    min-width: 333px !important;
+    max-width: 333px !important;
+  }
+  @include breakpoint(large) {
+    margin-right: 2rem;
   }
 }
 
