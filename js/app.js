@@ -20,6 +20,8 @@ database.ref().on("value", function(snapshot) {
   console.log(searchTerm);
 });
 
+var word_list = [];
+
 // Pull data from Firebase
 $.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", method: "get"
   }).done(function(response) {
@@ -27,16 +29,46 @@ $.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", metho
     console.log(Object.keys(response));
     var objRef = Object.keys(response);
     var counters = response;
-    objRef.map( key => Object.assign({key}, counters[key]) ).sort((a, b) => b.counter - a.counter )
-    .every( (counter, rank) => {
+    /*$.each(response, function(ObjRef) {
+      var word = {}
+      word.location = response.location;
+      word.weight = response.counter;
+      console.log(word)
+      word_list.push(word)
+    })
+    */
+    
+    var newRef = objRef.map( key => Object.assign({key}, counters[key]) ).sort((a, b) => b.counter - a.counter )
+    console.log("newRef =>", newRef)
+    newRef.every( (counter, limit) => {
+      var word = {}
+      word.text = counter.location;
+      word.weight = counter.counter;
+      console.log("word =>", word)
+      word_list.push(word)
+      return limit < newRef.length
+      /*
       var p = $("<p>");
       p.addClass("search-term menu-text");
       p.text(counter.location);
       $("#common-searches").append(p);
-      return rank < 4;
-    });
-    
+      */
+    })
   });
+
+// Adds a footer to the word cloud
+var wordFooter = $("<h5 id='word-footer'>");
+wordFooter.text("Global Searches")
+wordFooter.appendTo($("#wordcloud"))
+
+
+// Displays the wordcloud by calling this function on the word_list div
+$(document).ready(function() {
+   $("#wordcloud").jQCloud(word_list);
+});
+
+
+
 
 // Variables to hold DOM elements
 const $searchFld = $('#search-fld');
@@ -92,8 +124,8 @@ $searchFld.geocomplete({
   loc = $geoLoc.text().trim();
 
   
-  // Removes Global Searches
-  $("#common-searches").remove();
+  // Removes WordCloud
+  $("#wordcloud").remove();
 
   // If locality returns empty, use sub locality
   if ($geoLoc.text()) {
