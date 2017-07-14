@@ -202,9 +202,9 @@ a {
     }
   }
   .food-container {
-    padding-right: 1rem;
+    margin-right: 1rem;
     @include breakpoint(large) {
-      padding-right: 2rem;
+      margin-right: 2rem;
     }
     p {
       line-height: 1;
@@ -285,12 +285,15 @@ a {
     }
   }
   .event-container {
-    min-width: 305px;
+    min-width: 307px; // Quick fix to match food-container width at 320px view
     flex-direction: column;
     align-content: space-between;
-    padding-right: 1rem;
+    margin-right: 1rem;
+    @include breakpoint(medium) {
+      min-width: 333px;
+    }
     @include breakpoint(large) {
-      padding-right: 2rem;
+      margin-right: 2rem;
     }
     i {
       color: $topbar-blue;
@@ -304,6 +307,9 @@ a {
     .event-place {
       font-size: 1.125rem;
     }
+  }
+  .date-container {
+    justify-content: space-between;
   }
 }
 

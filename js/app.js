@@ -484,18 +484,32 @@ let eventHtml = function (data, category, icon) {
   console.log(category, data);
   let events = ``; // Define as an empty template literal
   let capCategory;
+  let shortTitle;
+  let len = 65; // Maximum length of string
   let dateTime;
   // Build event detail sections
   $.each(data.event, function(i, e) {
     // Call function to capitalize category for section title
     capCategory = capitalize(category);
-    dateTime = moment(e.start_time).format('MMMM Do h:mm a');
+    // If title is too long, call function to truncate it
+    if (e.title.length > len) {
+      shortTitle = truncate(e.title, len) + '...';
+    } else {
+      shortTitle = e.title;
+    }
+    // Convert date and time using moment JS. Ignore time of midnight if present (all-day event)
+    if (e.start_time.search('00:00:00') !== -1) {
+      dateTime = moment(e.start_time).format('MMMM Do');
+    } else {
+      dateTime = moment(e.start_time).format('MMMM Do [at] h:mm a');
+    }
+    
     events +=
       `<div class="event-container flex-container">
-        <p class="event-title"><i class="fi-${icon}"></i><strong>${e.title}</strong></p>
+        <p class="event-title"><i class="fi-${icon}"></i><strong>${shortTitle}</strong></p>
         <p class="event-place">${e.city_name}, <span>${e.region_abbr}</span></p>
         <p>${e.venue_name}</p>
-        <div class="date-container"
+        <div class="date-container flex-container"
           <p>${dateTime}</p>
           <p class="more-info"><a href="${e.url}" target="_blank"><img src="img/info.svg" alt=""></a></p>
         </div>
@@ -514,11 +528,7 @@ let eventHtml = function (data, category, icon) {
   return window[category];
 };
 
-// Function to capitalize first letter of a string
-let capitalize = function (string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-};
-
+// Function to convert wind direction from degrees to cardinal direction
 let cardinalDir = function (deg) {
   switch (true) {
     case (deg >= 0 && deg <= 11.25):
@@ -560,14 +570,27 @@ let cardinalDir = function (deg) {
   }
 };
 
+// Function to convert date to 3 character day
 let formatDay = function (time) {
   return moment.unix(time).format('ddd');
 };
 
+// Function to capitalize first letter of a string
+let capitalize = function (string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+// Function to remove punctuation and space from a string
 let cleanString = function (string) {
   return string.replace(/[^A-Za-z0-9_]/g,"");
 };
 
+// Function to truncate long strings
+let truncate = function (string, chars) {
+  return string.slice(0, (chars - 1));
+};
+
+// Function to return a random number
 let randomNumber = function (number) {
   return Math.floor(Math.random() * number) + 1;
 };
