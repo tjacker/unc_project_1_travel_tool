@@ -38,28 +38,28 @@ $.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", metho
     })
     */
     
-    var newRef = objRef.map( key => Object.assign({key}, counters[key]) ).sort((a, b) => b.counter - a.counter )
-    console.log("newRef =>", newRef)
+    var newRef = objRef.map( key => Object.assign({key}, counters[key]) ).sort((a, b) => b.counter - a.counter );
+    console.log("newRef =>", newRef);
     newRef.every( (counter, limit) => {
-      var word = {}
+      var word = {};
       word.text = counter.location;
       word.weight = counter.counter;
-      console.log("word =>", word)
-      word_list.push(word)
-      return limit < newRef.length
+      console.log("word =>", word);
+      word_list.push(word);
+      return limit < newRef.length;
       /*
       var p = $("<p>");
       p.addClass("search-term menu-text");
       p.text(counter.location);
       $("#common-searches").append(p);
       */
-    })
+    });
   });
 
 // Adds a footer to the word cloud
 var wordFooter = $("<h5 id='word-footer'>");
-wordFooter.text("Global Searches")
-wordFooter.appendTo($("#wordcloud"))
+wordFooter.text("Global Searches");
+wordFooter.appendTo($("#wordcloud"));
 
 
 // Displays the wordcloud by calling this function on the word_list div
