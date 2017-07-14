@@ -3,6 +3,7 @@ var $    = require('gulp-load-plugins')();
 
 var sassPaths = [
   'bower_components/normalize.scss/sass',
+  'bower_components/foundation-icon-fonts',
   'bower_components/foundation-sites/scss',
   'bower_components/motion-ui/src'
 ];

@@ -1,5 +1,5 @@
 /*jslint esversion: 6, browser: true*/
-/*global window, console, $, jQuery, moment, twttr, alert*/
+/*global window, console, $, jQuery, moment, twttr, firebase, alert*/
 
 // Initialize Firebase
 var config = {
@@ -16,28 +16,27 @@ firebase.initializeApp(config);
 const database = firebase.database();
 
 database.ref().on("value", function(snapshot) {
-  var searchTerm = snapshot.val()
-  console.log(searchTerm)
-})
+  var searchTerm = snapshot.val();
+  console.log(searchTerm);
+});
 
 // Pull data from Firebase
 $.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", method: "get"
   }).done(function(response) {
-    console.log(response)
-    console.log(Object.keys(response))
-    var objRef = Object.keys(response)
-    var counters = response
+    console.log(response);
+    console.log(Object.keys(response));
+    var objRef = Object.keys(response);
+    var counters = response;
     objRef.map( key => Object.assign({key}, counters[key]) ).sort((a, b) => b.counter - a.counter )
     .every( (counter, rank) => {
-      var p = $("<p>")
-      p.addClass("search-term menu-text")
-      p.text(counter.location)
-      $("#common-searches").append(p)
+      var p = $("<p>");
+      p.addClass("search-term menu-text");
+      p.text(counter.location);
+      $("#common-searches").append(p);
       return rank < 4;
-    })
+    });
     
-  })
-
+  });
 
 // Variables to hold DOM elements
 const $searchFld = $('#search-fld');
@@ -106,17 +105,17 @@ $searchFld.geocomplete({
   /*--------------------------------------------------------------------------------------*/
   // Setting data in firebase
   
-  var locCounter = 1
+  var locCounter = 1;
   
   // Addition put into object
-  var searchObj = {}
+  var searchObj = {};
   searchObj.location = loc;
   searchObj.counter = locCounter;
 
   // Push additions to the database array
   // database.ref().push(searchObj)
 
-  locationRef = database.ref();
+  var locationRef = database.ref();
   locationRef.once("value", function(snapshot) {
     var dbObj = snapshot.val();
     if (snapshot.hasChild(loc)) {
@@ -127,9 +126,9 @@ $searchFld.geocomplete({
       console.log('obj in if:', searchObj);
     }
 
-   database.ref().child(loc).set(searchObj)
+   database.ref().child(loc).set(searchObj);
 
-  })
+  });
 
   /*--------------------------------------------------------------------------------------*/
   
@@ -256,7 +255,7 @@ let eventAjax = function () {
   });
   
   // Function to call AJAX request with search parameter and category
-  let request = function (search, catgory) {
+  let request = function (search, catgory, icon) {
     searchTerm = `&keywords=${search}&`;
     $.ajax({
       url: url + searchTerm + param,
@@ -278,7 +277,7 @@ let eventAjax = function () {
         // Track the number of eventful objects returned
         categoryCount++;
         // Call function to populate event variables
-        eventHtml(data.events, catgory);
+        eventHtml(data.events, catgory, icon);
       }
       // If category count equals total number of categories, append data
       if (categoryCount === NumCategories) {
@@ -296,21 +295,24 @@ let eventAjax = function () {
     });
   };
 
-  request('concerts', 'concerts');
-  request('theatrical+performance', 'theater');
-  request('outdoors', 'outdoors');
-  request('sports', 'sports');
+  request('concerts', 'concerts', 'music');
+  request('theatrical+performance', 'theater', 'ticket');
+  request('outdoors', 'outdoors', 'social-forrst');
+  request('sports', 'sports', 'social-dribbble');
 };
 
-// Function to hold food AJAX request
+// Function to hold Twitter AJAX request
 let twitterAjax = function () {
+  // Append ul and create variable to hold new element
+  $twitter.append(ul);
+  var $twitterUl = $('#twitter ul');
   // Variables for AJAX call
   var query = `%23${cleanString(loc)}`; // %23 hashtag code. Call function to remove spaces and punctuation from locality
   var radius = `${searchDist}mi`;
   var geoCode = `&geocode=${lat},${lng},${radius}`;
   var tweets = 10;
   var count = `&count=${tweets}`;
-  var resultType = `&result_type=mixed`
+  var resultType = `&result_type=mixed`;
 
   // Further AJAX settings
   var settings = {
@@ -323,21 +325,17 @@ let twitterAjax = function () {
     "cache-control": "no-cache"
     }
   };
-
-    $twitter.append(ul)
-    $twitterUl = $("#twitter ul")
     
-    $twitterUl.html(
-      `<li class="accordion-item" data-accordion-item>
-        <a href="#" class="accordion-title">Recent Tweets</a>
-          <div class="accordion-content" data-tab-content>
-          <div class="flex-container" id="tweets">
-          </div>
+  $twitterUl.html(
+    `<li class="accordion-item is-active" data-accordion-item>
+      <a href="#" class="accordion-title">Recent Tweets</a>
+      <div class="accordion-content" data-tab-content>
+        <div class="flex-container" id="tweets">
         </div>
-      <li>`
-    );
-    $twitterUl.foundation();
-    
+      </div>
+    <li>`
+  );
+
 //  console.log(settings.url);
   // Ajax Call
   $.ajax(settings).done(function (response) {
@@ -352,11 +350,7 @@ let twitterAjax = function () {
         conversation: "none"
       });
     }
-
-
-    ;
-
-
+    $twitterUl.foundation();
   });
 };
 
@@ -487,21 +481,25 @@ let foodHtml = function (data) {
 };
 
 // Function to create and return the HTML for local events
-let eventHtml = function (data, category) {
+let eventHtml = function (data, category, icon) {
   console.log(category, data);
   let events = ``; // Define as an empty template literal
-  let img = '';
   let capCategory;
+  let dateTime;
   // Build event detail sections
   $.each(data.event, function(i, e) {
     // Call function to capitalize category for section title
     capCategory = capitalize(category);
+    dateTime = moment(e.start_time).format('MMMM Do h:mm a');
     events +=
-      `<div class="flex-container">
-        <p>${e.title}</p>
-        <p>${e.city_name}, <span>${e.region_abbr}</span></p>
-        <p>${e.start_time}</p>
-        <p class="more-info"><a href="${e.url}" target="_blank"><img src="img/info.svg" alt=""></a></p>
+      `<div class="event-container flex-container">
+        <p class="event-title"><i class="fi-${icon}"></i><strong>${e.title}</strong></p>
+        <p class="event-place">${e.city_name}, <span>${e.region_abbr}</span></p>
+        <p>${e.venue_name}</p>
+        <div class="date-container"
+          <p>${dateTime}</p>
+          <p class="more-info"><a href="${e.url}" target="_blank"><img src="img/info.svg" alt=""></a></p>
+        </div>
       </div>`;
   });
   

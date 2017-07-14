@@ -87,6 +87,11 @@ a {
         width: 3.5rem;
       }
     }
+    .site-name {
+      span {
+        color: $primary-color;
+      }
+    }
   }
   .menu {
     li {
@@ -230,7 +235,6 @@ a {
     }
     align-items: flex-end;
     .rest-rating {
-//      width: 60px;
       font-size: 1.2rem;
       color: $white;
       padding: 0.25rem 0.5rem;
@@ -251,7 +255,6 @@ a {
     }
   }
   .name-container {
-//    flex-direction: column;
     justify-content: space-between;
     align-items: flex-end;
     .rest-name {
@@ -271,10 +274,36 @@ a {
   @include titles;
   @include active;
   @include links;
+  .accordion-content,
+  .tabs-panel {
+    padding-top: 1rem;
+    overflow-x: scroll;
+    @include breakpoint(large) {
+      padding: 2rem;
+    }
+  }
+  .event-container {
+    min-width: 305px;
+    flex-direction: column;
+    align-content: space-between;
+    padding-right: 1rem;
+    @include breakpoint(large) {
+      padding-right: 2rem;
+    }
+    i {
+      color: $topbar-blue;
+      opacity: 0.85;
+      margin-right: 0.375rem;
+    }
+    .event-title {
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+    .event-place {
+      font-size: 1.125rem;
+    }
+  }
 }
-
-
-
 
 // 7. Footer
 // ----------------
@@ -296,4 +325,3 @@ footer {
     display: block;
   }
 }
-
