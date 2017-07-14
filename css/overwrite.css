@@ -1,8 +1,8 @@
 #twitter {
-  overflow: auto !important;
-  white-space: nowrap !important;
-  height: 300px !important;
-  padding: 16px !important;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 16px;
+  overflow-x: scroll;
 }
 
 #common-searches {

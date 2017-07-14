@@ -325,7 +325,7 @@ let twitterAjax = function () {
     "cache-control": "no-cache"
     }
   };
-    
+  
   $twitterUl.html(
     `<li class="accordion-item is-active" data-accordion-item>
       <a href="#" class="accordion-title">Recent Tweets</a>
@@ -349,8 +349,8 @@ let twitterAjax = function () {
         size: "small",
         conversation: "none"
       });
-    }
     $twitterUl.foundation();
+    }
   });
 };
 
@@ -575,8 +575,8 @@ let randomNumber = function (number) {
 
 // News API
 
-function getArticles() {
-    var location = "chicago";
+function newsAjax() {
+    var location = 'chicago';
     var queryURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=b374b0d5d62040c9a7db208eba9a3654&q=" + location + "&begin_date=20170701";
 
     $.ajax({
@@ -608,6 +608,6 @@ function getArticles() {
 }
 
 // var location = "chicago";
-getArticles();
+//getArticles();
 
 
