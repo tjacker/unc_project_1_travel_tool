@@ -62,6 +62,8 @@ body {
 }
 
 main {
+  position: relative;
+  min-height: 450px; // Set a minimum height fo word cloud
   flex-grow: 1;
 }
 
@@ -296,7 +298,7 @@ a {
       margin-right: 2rem;
     }
     i {
-      color: $topbar-blue;
+      color: $topbar-color;
       opacity: 0.85;
       margin-right: 0.375rem;
     }
@@ -347,7 +349,7 @@ twitterwidget {
 // ----------------
 
 footer {
-  background-color: $topbar-blue;
+  background-color: $topbar-color;
   color: $white;
   padding: 2rem;
   @include breakpoint(large) {

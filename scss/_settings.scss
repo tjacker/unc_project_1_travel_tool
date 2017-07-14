@@ -69,8 +69,8 @@
 // General
 
 // Colors
-$topbar-blue: #133c55;
-$icon-color: rgba($topbar-blue, 0.85);
+$topbar-color: #133c55;
+$icon-color: rgba($topbar-color, 0.85);
 $highlight-color: #f6f6e8;
 // ----------------------
 
@@ -849,7 +849,7 @@ $tooltip-radius: $global-radius;
 // -----------
 
 $topbar-padding: 1rem; // 0.5rem
-$topbar-background: $topbar-blue; // $light-gray
+$topbar-background: $topbar-color; // $light-gray
 $topbar-submenu-background: $topbar-background;
 $topbar-title-spacing: 0.5rem 1rem 0.5rem 0;
 $topbar-input-width: 220px; // 200px

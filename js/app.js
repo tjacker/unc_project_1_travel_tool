@@ -1,79 +1,11 @@
 /*jslint esversion: 6, browser: true*/
 /*global window, console, $, jQuery, moment, twttr, firebase, alert*/
 
-// Initialize Firebase
-var config = {
-  apiKey: "AIzaSyBi2lJmlRe28qRD5BixY5rJgKdunSOKz44",
-  authDomain: "coding-bootcamp-project-15d09.firebaseapp.com",
-  databaseURL: "https://coding-bootcamp-project-15d09.firebaseio.com",
-  projectId: "coding-bootcamp-project-15d09",
-  storageBucket: "coding-bootcamp-project-15d09.appspot.com",
-  messagingSenderId: "174217526226"
-};
-firebase.initializeApp(config);
-
-// Database variable
-const database = firebase.database();
-
-database.ref().on("value", function(snapshot) {
-  var searchTerm = snapshot.val();
-  console.log(searchTerm);
-});
-
-var word_list = [];
-
-// Pull data from Firebase
-$.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", method: "get"
-  }).done(function(response) {
-    console.log(response);
-    console.log(Object.keys(response));
-    var objRef = Object.keys(response);
-    var counters = response;
-    /*$.each(response, function(ObjRef) {
-      var word = {}
-      word.location = response.location;
-      word.weight = response.counter;
-      console.log(word)
-      word_list.push(word)
-    })
-    */
-    
-    var newRef = objRef.map( key => Object.assign({key}, counters[key]) ).sort((a, b) => b.counter - a.counter );
-    console.log("newRef =>", newRef);
-    newRef.every( (counter, limit) => {
-      var word = {};
-      word.text = counter.location;
-      word.weight = counter.counter;
-      console.log("word =>", word);
-      word_list.push(word);
-      return limit < newRef.length;
-      /*
-      var p = $("<p>");
-      p.addClass("search-term menu-text");
-      p.text(counter.location);
-      $("#common-searches").append(p);
-      */
-    });
-  });
-
-// Adds a footer to the word cloud
-var wordFooter = $("<h5 id='word-footer'>");
-wordFooter.text("Global Searches");
-wordFooter.appendTo($("#wordcloud"));
-
-
-// Displays the wordcloud by calling this function on the word_list div
-$(document).ready(function() {
-   $("#wordcloud").jQCloud(word_list);
-});
-
-
-
-
 // Variables to hold DOM elements
 const $searchFld = $('#search-fld');
 const $clearBtn = $('#clear-btn');
 const $locDetails = $('#location-details');
+const $wordCloud = $('#word-cloud');
 const $map = $('#map');
 const $weather = $('#weather');
 const $food= $('#food');
@@ -105,6 +37,59 @@ var theater = ``;
 var outdoors = ``;
 var sports = ``;
 
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyBi2lJmlRe28qRD5BixY5rJgKdunSOKz44",
+  authDomain: "coding-bootcamp-project-15d09.firebaseapp.com",
+  databaseURL: "https://coding-bootcamp-project-15d09.firebaseio.com",
+  projectId: "coding-bootcamp-project-15d09",
+  storageBucket: "coding-bootcamp-project-15d09.appspot.com",
+  messagingSenderId: "174217526226"
+};
+firebase.initializeApp(config);
+
+// Database variable
+const database = firebase.database();
+
+database.ref().on("value", function(snapshot) {
+  var searchTerm = snapshot.val();
+});
+
+var word_list = [];
+
+// Pull data from Firebase
+$.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", method: "get"
+  }).done(function(response) {
+    var objRef = Object.keys(response);
+    var counters = response;
+    
+    var newRef = objRef.map( key => Object.assign({key}, counters[key]) ).sort((a, b) => b.counter - a.counter );
+    newRef.every( (counter, limit) => {
+      var word = {};
+      word.text = counter.location;
+      word.weight = counter.counter;
+      word_list.push(word);
+      return limit < newRef.length;
+    });
+  });
+
+
+// Displays the word cloud by calling this function on the word_list div
+$(document).ready(function() {
+   $wordCloud.jQCloud(word_list, {
+     delayedMode: true
+   });
+});
+
+// On window resize, set height and width of word cloud and redraw
+$(window).on('resize', function () {
+  // Set height and width equal to main div
+  $wordCloud.css({
+    width: $("main").css("width"),
+    height: $("main").css("height")
+  }).empty().jQCloud(word_list);
+});
+
 // Call Geocomplete plugin to create autocomplete field and interactive map
 $searchFld.geocomplete({
   map: $map,
@@ -125,7 +110,7 @@ $searchFld.geocomplete({
 
   
   // Removes WordCloud
-  $("#wordcloud").remove();
+  $wordCloud.empty().hide();
 
   // If locality returns empty, use sub locality
   if ($geoLoc.text()) {
@@ -134,7 +119,7 @@ $searchFld.geocomplete({
     loc = $geoSubLoc.text().trim();
   }
   // This zone pushes information to firebase
-  /*--------------------------------------------------------------------------------------*/
+  /*---------------------------------------*/
   // Setting data in firebase
   
   var locCounter = 1;
@@ -152,17 +137,14 @@ $searchFld.geocomplete({
     var dbObj = snapshot.val();
     if (snapshot.hasChild(loc)) {
       var currentLoc = dbObj[loc];
-      console.log("currentLoc:", currentLoc);
-      console.log('currentLoc type', typeof currentLoc.counter);
       searchObj.counter = currentLoc.counter + 1;
-      console.log('obj in if:', searchObj);
     }
 
    database.ref().child(loc).set(searchObj);
 
   });
 
-  /*--------------------------------------------------------------------------------------*/
+  /*---------------------------------------*/
   
   
   // Call refresh function passing latitude and longitude values
@@ -173,7 +155,6 @@ $searchFld.geocomplete({
 $clearBtn.click(function () {
   $searchFld.val('').focus();
 });
-
 
 // Function to refresh location data based on new search term
 let refreshData = function (lat, lng) {
@@ -211,7 +192,6 @@ let weatherAjax = function () {
     method: 'GET'
   }).done(function (weather) {
     // Call function to populate current weather and append
-    console.log(weather);
     $weatherUl.append(weatherHtml(weather));
     // Nested AJAX call for location's 7-day forecast
     $.ajax({
@@ -341,16 +321,16 @@ let twitterAjax = function () {
   // Variables for AJAX call
   var query = `%23${cleanString(loc)}`; // %23 hashtag code. Call function to remove spaces and punctuation from locality
   var radius = `${searchDist}mi`;
-  var geoCode = `&geocode=${lat},${lng},${radius}`;
+//  var geoCode = `&geocode=${lat},${lng},${radius}`;
   var tweets = 10;
   var count = `&count=${tweets}`;
-  var resultType = `&result_type=mixed`;
+  var resultType = `&result_type=popular`;
 
   // Further AJAX settings
   var settings = {
   "async": true,
   "crossDomain": true,
-  "url": "https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/search/tweets.json?q=" + query + geoCode + count + resultType,
+  "url": "https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/search/tweets.json?q=" + query + count + resultType,
   "method": "GET",
   "headers": {
     "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANm41QAAAAAAymaZJR9slBVrP0CVnuDkNU1O2Wo%3D3mjc2Z1ym6zMyCWTY7uDiDIn7GivakZg7iGMlt70hZFQhzorUE",
@@ -370,7 +350,6 @@ let twitterAjax = function () {
 
   // Ajax Call
   $.ajax(settings).done(function (response) {
-    console.log(response);
     // For loop that will create the tweets according to the number of tweets returned from the API
     for (var i = 0; i < response.statuses.length; i++) {
       // Create tweet blocks dynamically. Each tweet is given an ID of "tweet-widget-i" where i is the number.
@@ -512,7 +491,6 @@ let foodHtml = function (data) {
 
 // Function to create and return the HTML for local events
 let eventHtml = function (data, category, icon) {
-  console.log(category, data);
   let events = ``; // Define as an empty template literal
   let capCategory;
   let shortTitle;
