@@ -314,6 +314,41 @@ a {
     justify-content: space-between;
   }
 }
+//--------------------
+#news {
+  @include titles;
+  @include active;
+  @include links;
+  .accordion-content,
+  .tabs-panel {
+    padding-top: 1rem;
+    overflow-x: scroll;
+    @include breakpoint(large) {
+      padding: 2rem;
+    }
+  .news-container {
+    min-width: 291px;
+    flex-direction: column;
+    align-content: space-between;
+    margin-right: 1rem;
+    @include breakpoint(medium) {
+      min-width: 333px
+    }   
+    @include breakpoint(large) {
+      margin-right: 2rem;
+    }
+    .news-headline {
+      font-size: 1.25rem;
+    }
+    .news-snippet {
+      font-size: 1.125rem;
+    }
+  }
+  }
+  
+}
+//--------------------
+
 
 // 7. Twitter
 // ----------------
