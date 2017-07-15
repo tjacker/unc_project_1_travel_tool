@@ -370,13 +370,13 @@ a {
 twitterwidget {
   min-width: 320px - 32px !important;
   max-width: 320px - 32px !important;
-  margin-right: 1rem;
+  margin-right: 1rem !important;
   @include breakpoint(medium) {
     min-width: 333px !important;
     max-width: 333px !important;
   }
   @include breakpoint(large) {
-    margin-right: 2rem;
+    margin-right: 2rem !important;
   }
 }
 
