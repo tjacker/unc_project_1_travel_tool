@@ -62,7 +62,6 @@ $.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", metho
   }).done(function(response) {
     var objRef = Object.keys(response);
     var counters = response;
-    
     var newRef = objRef.map( key => Object.assign({key}, counters[key]) ).sort((a, b) => b.counter - a.counter );
     newRef.every( (counter, limit) => {
       var word = {};
@@ -71,24 +70,12 @@ $.ajax({url: "https://coding-bootcamp-project-15d09.firebaseio.com/.json", metho
       word_list.push(word);
       return limit < newRef.length;
     });
+    // Displays the word cloud by calling this method on the word list array
+    $wordCloud.jQCloud(word_list, {
+      autoResize: true,
+      delay: 10
+    });
   });
-
-
-// Displays the word cloud by calling this function on the word_list div
-$(document).ready(function() {
-   $wordCloud.jQCloud(word_list, {
-     delayedMode: true
-   });
-});
-
-// On window resize, set height and width of word cloud and redraw
-$(window).on('resize', function () {
-  // Set height and width equal to main div
-  $wordCloud.css({
-    width: $("main").css("width"),
-    height: $("main").css("height")
-  }).empty().jQCloud(word_list);
-});
 
 // Call Geocomplete plugin to create autocomplete field and interactive map
 $searchFld.geocomplete({
@@ -324,7 +311,7 @@ let twitterAjax = function () {
 //  var geoCode = `&geocode=${lat},${lng},${radius}`;
   var tweets = 10;
   var count = `&count=${tweets}`;
-  var resultType = `&result_type=popular`;
+  var resultType = `&result_type=mixed`;
 
   // Further AJAX settings
   var settings = {

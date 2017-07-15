@@ -1,55 +1,5 @@
-/* fonts */
 
-div.jqcloud {
-  font-family: 'Cabin', sans-serif;
-  line-height: normal;
-  font-size: 12px;
-  @include breakpoint(large) {
-    font-size: 14px;
-  }
-}
-
-div.jqcloud a {
-  font-size: inherit;
-  text-decoration: none;
-}
-
-div.jqcloud span.w10 { font-size: 500%; }
-div.jqcloud span.w9 { font-size: 450%; }
-div.jqcloud span.w8 { font-size: 400%; }
-div.jqcloud span.w7 { font-size: 375%; }
-div.jqcloud span.w6 { font-size: 325%; }
-div.jqcloud span.w5 { font-size: 300%; }
-div.jqcloud span.w4 { font-size: 250%; }
-div.jqcloud span.w3 { font-size: 200%; }
-div.jqcloud span.w2 { font-size: 150%; }
-div.jqcloud span.w1 { font-size: 100%; }
-
-/* colors */
-
-div.jqcloud { color: $white; }
-div.jqcloud a { color: inherit; }
-div.jqcloud a:hover { color: inherit; }
-div.jqcloud a:hover { color: inherit; }
-div.jqcloud span.w10 { color: lighten($dark-gray, 90%); }
-div.jqcloud span.w9 { color: lighten($dark-gray, 80%); }
-div.jqcloud span.w8 { color: lighten($dark-gray, 70%); }
-div.jqcloud span.w7 { color: lighten($dark-gray, 60%); }
-div.jqcloud span.w6 { color: lighten($dark-gray, 50%); }
-div.jqcloud span.w5 { color: lighten($dark-gray, 40%); }
-div.jqcloud span.w4 { color: lighten($dark-gray, 30%); }
-div.jqcloud span.w3 { color: lighten($dark-gray, 20%); }
-div.jqcloud span.w2 { color: lighten($dark-gray, 10%); }
-div.jqcloud span.w1 { color: $dark-gray; }
-
-/* layout */
-
-div.jqcloud {
-  overflow: hidden;
-  position: relative;
-}
-
-div.jqcloud span { padding: 0; }
+//* layout */
 
 #word-cloud {
   position: absolute;
@@ -60,4 +10,57 @@ div.jqcloud span { padding: 0; }
   bottom: 0;
   background-color: $topbar-color;
   padding: 1rem;
+}
+
+//* fonts */
+
+.jqcloud {
+  font-family: 'Cabin', sans-serif;
+  line-height: normal;
+  overflow: hidden;
+  position: relative;
+  font-size: 12px;
+  @include breakpoint(large) {
+    font-size: 14px;
+  }
+}
+
+.jqcloud-word {
+  margin: 0;
+  padding: 0;
+}
+
+//* colors */
+
+.jqcloud-word.w1 { color: $dark-gray; }
+.jqcloud-word.w2 { color: lighten($dark-gray, 10%); }
+.jqcloud-word.w4 { color: lighten($dark-gray, 30%); }
+.jqcloud-word.w3 { color: lighten($dark-gray, 20%); }
+.jqcloud-word.w5 { color: lighten($dark-gray, 40%); }
+.jqcloud-word.w6 { color: lighten($dark-gray, 50%); }
+.jqcloud-word.w7 { color: lighten($dark-gray, 60%); }
+.jqcloud-word.w8 { color: lighten($dark-gray, 70%); }
+.jqcloud-word.w9 { color: lighten($dark-gray, 80%); }
+.jqcloud-word.w10 { color: lighten($dark-gray, 90%); }
+
+//* sizes */
+
+.jqcloud-word.w1 { font-size: 100%; }
+.jqcloud-word.w2 { font-size: 150%; }
+.jqcloud-word.w3 { font-size: 200%; }
+.jqcloud-word.w4 { font-size: 250%; }
+.jqcloud-word.w5 { font-size: 300%; }
+.jqcloud-word.w6 { font-size: 325%; }
+.jqcloud-word.w7 { font-size: 375%; }
+.jqcloud-word.w8 { font-size: 400%; }
+.jqcloud-word.w9 { font-size: 450%; }
+.jqcloud-word.w10 { font-size: 500%; }
+
+.jqcloud-word a {
+  color: inherit;
+  font-size: inherit;
+  text-decoration: none;
+}
+.jqcloud-word a:hover {
+  color: #00ccff;
 }
