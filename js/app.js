@@ -11,7 +11,7 @@ const $weather = $('#weather');
 const $food= $('#food');
 const $event= $('#event');
 const $twitter= $('#twitter');
-const $news = $("#news")
+
 // Variable to hold responsive accordion and tabs container
 const ul = '<ul class="accordion" data-allow-all-closed="true" data-responsive-accordion-tabs="accordion large-tabs"></ul>';
 
@@ -156,7 +156,6 @@ let refreshData = function (lat, lng) {
   foodAjax();
   eventAjax();
   twitterAjax();
-  newsAjax();
 };
 
 // Function to hold weather AJAX requests
@@ -592,63 +591,4 @@ let truncate = function (string, chars) {
 let randomNumber = function (number) {
   return Math.floor(Math.random() * number) + 1;
 };
-
-// News API
-
-function newsAjax() {
-    var location = loc;
-    var queryURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=b374b0d5d62040c9a7db208eba9a3654&q=" + location + "&begin_date=20170701";
-
-    $.ajax({
-        url: queryURL,
-        method: "GET",
-        "async": true,
-        "crossDomain": true
-    }).done(function(result) {
-        console.log(result);
-        
-        
-        console.log("URL: " + queryURL);
-        for (var i = 0; i < 5; i++) {
-            var headline = result.response.docs[i].headline.main;
-            var snippet = result.response.docs[i].snippet;
-            var thumbnailURL = result.response.docs[i].multimedia[0].legacy.thumbnail;
-            console.log("Thumbnail result: ", thumbnailURL)
-            var url = result.response.docs[i].web_url;
-            console.log("headline: " + headline);
-            console.log("snippet: " + snippet);
-            console.log("thumbnail: " + thumbnailURL);
-            console.log("url: " + url);
-
-            var newsDiv = $("<div class='news-container'>");
-            newsDiv.html(
-              `
-                <div class="info-container" flex-container">
-                  <p class="news-headline"><strong>${headline}</strong></p>
-                  <p class="news-snippet">${snippet}</p>
-                  <p class="more-info"><a href=${url} target="_blank"><img src="img/info.svg" alt=""</a></p>
-              </div>`)
-            $("#news").append(ul)
-            $newsUl = $("#news ul")
-            $newsUl.html(`
-            <li class="accordion-item is-active" data-accordion-item>
-              <a href="#" class="accordion-title">Recent News Articles</a>
-              <div class="accordion-content" data-tab-content>
-                <div class="flex-container news-container" >
-                </div>
-              </div>
-            </li>
-            `)
-            $newsUl.append(news-container)    
-            $newsUl.foundation()
-        }
-    }).fail(function(err) {
-  throw err;
-  });
-}
-
-
-// var location = "chicago";
-//getArticles();
-
 

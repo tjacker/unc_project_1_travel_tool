@@ -12,7 +12,6 @@
 //   6. Events
 //   7. Twitter
 //   8. Footer
-//   9. Common Search
 
 // 0. Mixins
 // ----------------
@@ -314,41 +313,6 @@ a {
     justify-content: space-between;
   }
 }
-//--------------------
-#news {
-  @include titles;
-  @include active;
-  @include links;
-  .accordion-content,
-  .tabs-panel {
-    padding-top: 1rem;
-    overflow-x: scroll;
-    @include breakpoint(large) {
-      padding: 2rem;
-    }
-  .news-container {
-    min-width: 291px;
-    flex-direction: column;
-    align-content: space-between;
-    margin-right: 1rem;
-    @include breakpoint(medium) {
-      min-width: 333px
-    }   
-    @include breakpoint(large) {
-      margin-right: 2rem;
-    }
-    .news-headline {
-      font-size: 1.25rem;
-    }
-    .news-snippet {
-      font-size: 1.125rem;
-    }
-  }
-  }
-  
-}
-//--------------------
-
 
 // 7. Twitter
 // ----------------
@@ -400,28 +364,4 @@ footer {
     display: inline-block;
   }
 }
-
-// 8. Common Search
-// ----------------
-
-#common-searches {
-  position: absolute;
-  z-index: 25;
-  top: 40%;
-  left: 50%;
-  text-align: center;
-  box-shadow: 5px 5px 5px grey;
-  width: 500px;
-  transform: translate(-50%, -50%);
-  #search-header {
-    background-color: #133c55;
-    color: #fdfdfa;
-    text-align: center;
-  }
-  .search-term {
-    color: #fb7064;
-    z-index: 26;
-  }
-}
-
 
